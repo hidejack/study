@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans>
+	<bean id="foo" class="demo.Foo"/>
+	<bean id="date" class="java.util.Date"/>
+	<bean id="testCase" class="demo.TestCase"/>
+</beans>

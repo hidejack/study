@@ -1,0 +1,766 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>day02</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<style type="text/css">
+/* GitHub stylesheet for MarkdownPad (http://markdownpad.com) */
+/* Author: Nicolas Hery - http://nicolashery.com */
+/* Version: b13fe65ca28d2e568c6ed5d7f06581183df8f2ff */
+/* Source: https://github.com/nicolahery/markdownpad-github */
+
+/* RESET
+=============================================================================*/
+
+html, body, div, span, applet, object, iframe, h1, h2, h3, h4, h5, h6, p, blockquote, pre, a, abbr, acronym, address, big, cite, code, del, dfn, em, img, ins, kbd, q, s, samp, small, strike, strong, sub, sup, tt, var, b, u, i, center, dl, dt, dd, ol, ul, li, fieldset, form, label, legend, table, caption, tbody, tfoot, thead, tr, th, td, article, aside, canvas, details, embed, figure, figcaption, footer, header, hgroup, menu, nav, output, ruby, section, summary, time, mark, audio, video {
+  margin: 0;
+  padding: 0;
+  border: 0;
+}
+
+/* BODY
+=============================================================================*/
+
+body {
+  font-family: Helvetica, arial, freesans, clean, sans-serif;
+  font-size: 14px;
+  line-height: 1.6;
+  color: #333;
+  background-color: #fff;
+  padding: 20px;
+  max-width: 960px;
+  margin: 0 auto;
+}
+
+body>*:first-child {
+  margin-top: 0 !important;
+}
+
+body>*:last-child {
+  margin-bottom: 0 !important;
+}
+
+/* BLOCKS
+=============================================================================*/
+
+p, blockquote, ul, ol, dl, table, pre {
+  margin: 15px 0;
+}
+
+/* HEADERS
+=============================================================================*/
+
+h1, h2, h3, h4, h5, h6 {
+  margin: 20px 0 10px;
+  padding: 0;
+  font-weight: bold;
+  -webkit-font-smoothing: antialiased;
+}
+
+h1 tt, h1 code, h2 tt, h2 code, h3 tt, h3 code, h4 tt, h4 code, h5 tt, h5 code, h6 tt, h6 code {
+  font-size: inherit;
+}
+
+h1 {
+  font-size: 28px;
+  color: #000;
+}
+
+h2 {
+  font-size: 24px;
+  border-bottom: 1px solid #ccc;
+  color: #000;
+}
+
+h3 {
+  font-size: 18px;
+}
+
+h4 {
+  font-size: 16px;
+}
+
+h5 {
+  font-size: 14px;
+}
+
+h6 {
+  color: #777;
+  font-size: 14px;
+}
+
+body>h2:first-child, body>h1:first-child, body>h1:first-child+h2, body>h3:first-child, body>h4:first-child, body>h5:first-child, body>h6:first-child {
+  margin-top: 0;
+  padding-top: 0;
+}
+
+a:first-child h1, a:first-child h2, a:first-child h3, a:first-child h4, a:first-child h5, a:first-child h6 {
+  margin-top: 0;
+  padding-top: 0;
+}
+
+h1+p, h2+p, h3+p, h4+p, h5+p, h6+p {
+  margin-top: 10px;
+}
+
+/* LINKS
+=============================================================================*/
+
+a {
+  color: #4183C4;
+  text-decoration: none;
+}
+
+a:hover {
+  text-decoration: underline;
+}
+
+/* LISTS
+=============================================================================*/
+
+ul, ol {
+  padding-left: 30px;
+}
+
+ul li > :first-child, 
+ol li > :first-child, 
+ul li ul:first-of-type, 
+ol li ol:first-of-type, 
+ul li ol:first-of-type, 
+ol li ul:first-of-type {
+  margin-top: 0px;
+}
+
+ul ul, ul ol, ol ol, ol ul {
+  margin-bottom: 0;
+}
+
+dl {
+  padding: 0;
+}
+
+dl dt {
+  font-size: 14px;
+  font-weight: bold;
+  font-style: italic;
+  padding: 0;
+  margin: 15px 0 5px;
+}
+
+dl dt:first-child {
+  padding: 0;
+}
+
+dl dt>:first-child {
+  margin-top: 0px;
+}
+
+dl dt>:last-child {
+  margin-bottom: 0px;
+}
+
+dl dd {
+  margin: 0 0 15px;
+  padding: 0 15px;
+}
+
+dl dd>:first-child {
+  margin-top: 0px;
+}
+
+dl dd>:last-child {
+  margin-bottom: 0px;
+}
+
+/* CODE
+=============================================================================*/
+
+pre, code, tt {
+  font-size: 12px;
+  font-family: Consolas, "Liberation Mono", Courier, monospace;
+}
+
+code, tt {
+  margin: 0 0px;
+  padding: 0px 0px;
+  white-space: nowrap;
+  border: 1px solid #eaeaea;
+  background-color: #f8f8f8;
+  border-radius: 3px;
+}
+
+pre>code {
+  margin: 0;
+  padding: 0;
+  white-space: pre;
+  border: none;
+  background: transparent;
+}
+
+pre {
+  background-color: #f8f8f8;
+  border: 1px solid #ccc;
+  font-size: 13px;
+  line-height: 19px;
+  overflow: auto;
+  padding: 6px 10px;
+  border-radius: 3px;
+}
+
+pre code, pre tt {
+  background-color: transparent;
+  border: none;
+}
+
+kbd {
+    -moz-border-bottom-colors: none;
+    -moz-border-left-colors: none;
+    -moz-border-right-colors: none;
+    -moz-border-top-colors: none;
+    background-color: #DDDDDD;
+    background-image: linear-gradient(#F1F1F1, #DDDDDD);
+    background-repeat: repeat-x;
+    border-color: #DDDDDD #CCCCCC #CCCCCC #DDDDDD;
+    border-image: none;
+    border-radius: 2px 2px 2px 2px;
+    border-style: solid;
+    border-width: 1px;
+    font-family: "Helvetica Neue",Helvetica,Arial,sans-serif;
+    line-height: 10px;
+    padding: 1px 4px;
+}
+
+/* QUOTES
+=============================================================================*/
+
+blockquote {
+  border-left: 4px solid #DDD;
+  padding: 0 15px;
+  color: #777;
+}
+
+blockquote>:first-child {
+  margin-top: 0px;
+}
+
+blockquote>:last-child {
+  margin-bottom: 0px;
+}
+
+/* HORIZONTAL RULES
+=============================================================================*/
+
+hr {
+  clear: both;
+  margin: 15px 0;
+  height: 0px;
+  overflow: hidden;
+  border: none;
+  background: transparent;
+  border-bottom: 4px solid #ddd;
+  padding: 0;
+}
+
+/* TABLES
+=============================================================================*/
+
+table th {
+  font-weight: bold;
+}
+
+table th, table td {
+  border: 1px solid #ccc;
+  padding: 6px 13px;
+}
+
+table tr {
+  border-top: 1px solid #ccc;
+  background-color: #fff;
+}
+
+table tr:nth-child(2n) {
+  background-color: #f8f8f8;
+}
+
+/* IMAGES
+=============================================================================*/
+
+img {
+  max-width: 100%
+}
+</style>
+</head>
+<body>
+<h1>JDBC</h1>
+<h2>数据库连接池</h2>
+<p>数据库连接池是管理并发访问数据库连接的理想解决方案.</p>
+<p>DriverManager管理数据库连接适合单线程情况, 而在多线程并发情况下,为了能够重用数据库连接, 同时控制并发连接总数,保护数据库避免连接过载, 一定要使用数据库连接池.</p>
+<p>连接池原理:</p>
+<p><img src="2.png" /></p>
+<h3>使用DBCP连接池</h3>
+<p>数据库连接池的开源实现非常多, DBCP是常用的连接池之一.</p>
+<p>导入DBCP pom.xml:</p>
+<pre><code>&lt;dependency&gt;
+  &lt;groupId&gt;commons-dbcp&lt;/groupId&gt;
+  &lt;artifactId&gt;commons-dbcp&lt;/artifactId&gt;
+  &lt;version&gt;1.4&lt;/version&gt;
+&lt;/dependency&gt;   
+</code></pre>
+
+<p>使用DBCP:</p>
+<ol>
+<li>导入连接池jar</li>
+<li>创建连接池对象</li>
+<li>设置数据库必须的连接参数</li>
+<li>设置可选的连接池管理策略参数</li>
+<li>从连接池中获得活动的数据库连接</li>
+<li>使用连接范围数据库</li>
+<li>
+使用以后关闭数据库连接
+<ul>
+<li>这个关闭不是真的关闭连接,而是将使用过的连接归还给连接池.</li>
+</ul>
+</li>
+</ol>
+<p>案例:</p>
+<pre><code>    String driver=&quot;oracle.jdbc.OracleDriver&quot;;
+    String url=&quot;jdbc:oracle:thin:@192.168.201.227:1521:orcl&quot;;
+    String username = &quot;openlab&quot;;
+    String password = &quot;open123&quot;;
+    BasicDataSource ds = 
+        new BasicDataSource();
+    //设置必须的参数
+    ds.setDriverClassName(driver);
+    ds.setUrl(url);
+    ds.setUsername(username);
+    ds.setPassword(password);
+    //设置连接池的管理策略参数
+    ds.setInitialSize(2);
+    ds.setMaxActive(100);
+    //使用连接池中的数据库连接
+    Connection conn=ds.getConnection();
+    //执行SQL
+    String sql = &quot;select 'hello' as a &quot;
+            + &quot;from dual&quot;;
+    Statement st=conn.createStatement();
+    ResultSet rs=st.executeQuery(sql);
+    while(rs.next()){
+        String str = rs.getString(&quot;a&quot;);
+        System.out.println(str);
+    }
+    //归还连接到数据库连接池!!
+    conn.close();
+</code></pre>
+
+<p>为了便捷的使用连接池,经常将连接池封装为一个连接管理工具类:</p>
+<pre><code>/**
+ * 连接池版本的 数据库 连接管理工具类
+ * 适合于并发场合 
+ */
+public class DBUtils {
+    private static String driver;
+    private static String url;
+    private static String username;
+    private static String password;
+    private static int initSize;
+    private static int maxActive;
+    private static BasicDataSource ds;
+
+    static{
+        ds=new BasicDataSource();
+        Properties cfg=new Properties();
+        try{
+            InputStream in = DBUtils.class
+                .getClassLoader()
+                .getResourceAsStream(&quot;db.properties&quot;);
+            cfg.load(in);
+            //初始化参数
+            driver = cfg.getProperty(&quot;jdbc.driver&quot;);
+            url = cfg.getProperty(&quot;jdbc.url&quot;);
+            username = cfg.getProperty(&quot;jdbc.username&quot;);
+            password = cfg.getProperty(&quot;jdbc.password&quot;);
+            initSize = Integer.parseInt( 
+                    cfg.getProperty(&quot;initSize&quot;));
+            maxActive = Integer.parseInt(
+                    cfg.getProperty(&quot;maxActive&quot;)); 
+            in.close();
+            //初始化连接池
+            ds.setDriverClassName(driver);
+            ds.setUrl(url);
+            ds.setUsername(username);
+            ds.setPassword(password);
+            ds.setInitialSize(initSize);
+            ds.setMaxActive(maxActive); 
+        }catch(Exception e){
+            e.printStackTrace();
+            throw new RuntimeException(e);
+        }
+    }
+
+    public static Connection getConnection(){
+        try{
+            //getConnection()从连接池中获取重用
+            //的连接, 如果连接池满了,则等待. 
+            //如果有连接归还,则获取重用的连接
+            Connection conn = ds.getConnection();
+            return conn;
+        }catch(Exception e){
+            e.printStackTrace();
+            throw new RuntimeException(e);
+        }
+    }
+
+    public static void close(Connection conn){
+        if(conn!=null){
+            try {
+                //将用过的连接归还到连接池
+                conn.close();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+    }
+}
+</code></pre>
+
+<p>其配套参数配置文件 db.properties:</p>
+<pre><code># db.properties
+jdbc.driver=oracle.jdbc.OracleDriver
+jdbc.url=jdbc:oracle:thin:@192.168.201.227:1521:orcl
+jdbc.username=openlab
+jdbc.password=open123
+
+# paramter for BasicDataSource
+initSize=2
+maxActive=2
+</code></pre>
+
+<p>测试:</p>
+<pre><code>public class Demo02 {
+    public static void main(String[] args) {
+        Connection conn = null;
+        try{
+            conn = DBUtils.getConnection();
+            String sql=&quot;select 'Hello' as a &quot;
+                    + &quot;from dual&quot;;
+            Statement st = conn.createStatement();
+            ResultSet rs = st.executeQuery(sql);
+            while(rs.next()){
+                String str=rs.getString(&quot;a&quot;);
+                System.out.println(str);
+            }
+            rs.close();
+            st.close();
+        }catch(Exception e){
+            e.printStackTrace();
+        }finally{
+            DBUtils.close(conn); 
+        }
+    }
+}
+</code></pre>
+
+<blockquote>
+<p>DBUtils 简化了数据库访问</p>
+</blockquote>
+<p>连接池并发性测试: </p>
+<p>测试原理:</p>
+<p><img src="1.png" /></p>
+<p>测试案例:</p>
+<pre><code>/*
+ * 连接池并发测试
+ */
+public class Demo03 {
+    public static void main(String[] args) {
+        Thread t1 = new DemoTherad(5000);
+        Thread t2 = new DemoTherad(6000);
+        Thread t3 = new DemoTherad(1000);
+        t1.start();
+        t2.start();
+        t3.start();
+    }
+}
+
+class DemoTherad extends Thread{
+    int wait;
+
+    public DemoTherad(int wait) {
+        this.wait=wait;
+    }
+
+    public void run() {
+        Connection conn = null;
+        try {
+            //getConnection方法在连接池中没有
+            //连接可以使用时候,会阻塞等待
+            conn=DBUtils.getConnection();
+            System.out.println(&quot;获取了连接:&quot;+conn);
+            Thread.sleep(wait);
+            String sql = &quot;select 'Hello' as a &quot;
+                    + &quot;from dual&quot;;
+            Statement st=conn.createStatement();
+            ResultSet rs=st.executeQuery(sql);
+            while(rs.next()){
+                System.out.println(rs.getString(&quot;a&quot;));
+            }
+            System.out.println(wait+&quot;结束&quot;); 
+        } catch (Exception e) {
+            e.printStackTrace();
+        }finally {
+            DBUtils.close(conn);
+        }
+    }
+}
+</code></pre>
+
+<h2>PreparedStatement</h2>
+<p>PreparedStatement 对象用于执行带参数的预编译执行计划, 其原理是:</p>
+<p><img src="3.png" /></p>
+<p>关于执行计划:</p>
+<ol>
+<li>任何SQL执行过程都是先编译&quot;执行计划&quot;,再执行&quot;执行计划&quot;</li>
+<li>
+数据库为了优化性能, 在SQL相同时候, 会重用执行计划
+<ul>
+<li>执行计划编译较慢</li>
+<li>重用执行计划可以提高数据库性能</li>
+</ul>
+</li>
+<li>
+数据库只在SQL语句完全一样时候才重用相同的执行计划
+<ul>
+<li>如果SQL语句中有一个字符的更改,也会执行不同的执行计划</li>
+<li>SQL中一个空格或者一个大小写不同也会创建不同的执行计划</li>
+</ul>
+</li>
+</ol>
+<blockquote>
+<p>PreparedStatement 好处是可以重复使用执行计划,提高DB效率</p>
+</blockquote>
+<p>使用步骤</p>
+<ol>
+<li>将带参数的SQL发送到数据库创建执行计划</li>
+<li>替换执行计划中的参数</li>
+<li>执行执行计划,得到结果</li>
+</ol>
+<p>案例:</p>
+<pre><code>/**
+ * 演示预编译的SQL执行计划 
+ */
+public class Demo04 {
+    public static void main(String[] args) {
+        Connection conn = null;
+        try {
+            conn = DBUtils.getConnection();
+            //创建带参数的SQL语句.
+            String sql=&quot;insert into robin_demo &quot;
+                    + &quot;(id, name) values (?,?)&quot;;
+            //将SQL发送到数据库,创建执行计划
+            //返回值 ps 就代表执行计划
+            PreparedStatement ps=
+                conn.prepareStatement(sql);
+            //替换执行计划中的参数, 2个参数
+            //按照序号发送参数
+            ps.setInt(1, 9);
+            ps.setString(2, &quot;Andy&quot;);
+            //执行&quot;执行计划&quot;
+            int n=ps.executeUpdate();
+            System.out.println(n); 
+            //再次重复使用执行计划
+            ps.setInt(1, 100);
+            ps.setString(2, &quot;Wang&quot;); 
+            n = ps.executeUpdate();
+            System.out.println(n); 
+        } catch (Exception e) {
+            e.printStackTrace();
+        }finally{
+            DBUtils.close(conn);
+        }
+    }
+}
+</code></pre>
+
+<p>案例:</p>
+<pre><code>/**
+ * 使用执行计划执行更新语句 
+ */
+public class Demo05 {
+    public static void main(String[] args) {
+        Connection conn = null;
+        try{
+            conn = DBUtils.getConnection();
+            String sql=&quot;update robin_demo &quot;
+                    + &quot;set name=? &quot;
+                    + &quot;where id=? &quot;;
+            PreparedStatement ps=
+                conn.prepareStatement(sql);
+            ps.setString(1, &quot;Lao Wang&quot;);
+            ps.setInt(2, 100);
+            int n=ps.executeUpdate();
+            System.out.println(n);//1
+            //?
+        }catch(Exception e){
+            e.printStackTrace();
+        }finally{
+            DBUtils.close(conn);
+        }
+    }
+
+}
+</code></pre>
+
+<p>案例: 带参数的查询功能:</p>
+<pre><code>/**
+ * 利用PS 实现查询功能 
+ */
+public class Demo06 {
+    public static void main(String[] args) {
+        Connection conn = null;
+        try {
+            conn = DBUtils.getConnection();
+            String sql=&quot;select id, name &quot;
+                    + &quot;from robin_demo &quot;
+                    + &quot;where name like ? &quot;;
+            PreparedStatement ps =
+                conn.prepareStatement(sql);
+            ps.setString(1, &quot;%w%&quot;); 
+            ResultSet rs=ps.executeQuery(); 
+            while(rs.next()){
+                //getInt(列的序号),利用序号获取值
+                int id=rs.getInt(1);
+                String name=rs.getString(2);
+                System.out.println(id+&quot;,&quot;+name);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            DBUtils.close(conn); 
+        }
+    }
+}
+</code></pre>
+
+<h3>PreparedStatement 可以避免SQL注入攻击</h3>
+<p>何为注入攻击:</p>
+<p>用户输入了 含有SQL成分的参数, 参数在拼接SQL时候造成SQL语句的语义改变! 进一步改变SQL语句的执行计划! 最终的执行结果就完全变了!!!</p>
+<p>如何避免:</p>
+<ol>
+<li>拦截用户输入的SQL成分</li>
+<li>固定执行计划,避免改变执行逻辑	</li>
+</ol>
+<p>原理:</p>
+<p><img src="4.png" /></p>
+<p>一个注入攻击的例子:</p>
+<p>数据准备:</p>
+<pre><code>create table robin_user1(
+  id number(6),
+  name varchar2(100),
+  pwd varchar2(100)
+);
+insert into robin_user1 (id, name, pwd)
+    values (1, 'tom', '123' );
+insert into robin_user1 (id, name, pwd)
+    values (2, 'jerry', '123' );
+</code></pre>
+
+<p>案例代码:</p>
+<pre><code>public class Demo07 {
+    public static void main(String[] args) {
+        //获取用户输入
+        Scanner in = new Scanner(System.in);
+        System.out.print(&quot;用户名:&quot;);
+        String name=in.nextLine();
+        System.out.print(&quot;密码:&quot;);
+        String pwd = in.nextLine();
+        //检查登录情况
+        boolean pass=login(name, pwd);
+        if(pass){
+            System.out.println(&quot;欢迎你!&quot;+name);
+        }else{
+            System.out.println(&quot;用户名或者密码错误!&quot;);
+        }
+    }
+
+
+    //检查用户是否能够登录
+    public static boolean login(
+        String name, String pwd){
+        String sql=&quot;select count(*) as c &quot;
+                + &quot;from robin_user1 &quot;
+                + &quot;where name=\'&quot;+name+&quot;\' &quot;
+                + &quot;and pwd=\'&quot;+pwd+&quot;\' &quot;;
+        System.out.println(sql); 
+        Connection conn=null;
+        try {
+            conn = DBUtils.getConnection();
+            Statement st=conn.createStatement();
+            ResultSet rs=st.executeQuery(sql);
+            while(rs.next()){
+                int n = rs.getInt(&quot;c&quot;);
+                return n&gt;=1;
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }finally{
+            DBUtils.close(conn);
+        }
+        return false;
+    }
+}
+</code></pre>
+
+<p>测试:</p>
+<pre><code>在输入用户名 tom 和密码: 1' or '1'='1 时候出现注入攻击现象
+</code></pre>
+
+<p>使用 PS 就可以避免注入攻击, 更新login方法如下:</p>
+<pre><code>/**
+ * 利用 PS 就可以避免注入攻击
+ * @param name
+ * @param pwd
+ * @return
+ */
+public static boolean login(
+    String name, String pwd){
+    String sql = &quot;select count(*) as c &quot;
+            + &quot;from robin_user1 &quot;
+            + &quot;where name=? and pwd=? &quot;;
+    Connection conn = null;
+    try {
+        conn = DBUtils.getConnection();
+        PreparedStatement ps=
+            conn.prepareStatement(sql);
+        ps.setString(1, name);
+        ps.setString(2, pwd); 
+        ResultSet rs=ps.executeQuery();
+        while(rs.next()){
+            int n = rs.getInt(&quot;c&quot;);
+            return n&gt;=1;
+        }
+    } catch (Exception e) {
+        e.printStackTrace();
+    }finally{
+        DBUtils.close(conn); 
+    }
+    return false;
+}
+</code></pre>
+
+<p>测试结果不会发生注入攻击</p>
+<hr />
+<h2>作业</h2>
+<p>实现课堂全部案例代码</p>
+<ol>
+<li>测试数据库连接池的使用</li>
+<li>测试数据库连接池的并发性</li>
+<li>封装连接管理工具类 DBUtils</li>
+<li>利用PS实现数据库插入功能</li>
+<li>利用PS实现数据库更新功能</li>
+<li>利用PS实现数据库删除功能</li>
+<li>利用PS实现数据库查询功能</li>
+<li>完成SQL注入案例</li>
+</ol>
+
+</body>
+</html>
+<!-- This document was created with MarkdownPad, the Markdown editor for Windows (http://markdownpad.com) -->

@@ -1,0 +1,624 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>day04</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<style type="text/css">
+/* GitHub stylesheet for MarkdownPad (http://markdownpad.com) */
+/* Author: Nicolas Hery - http://nicolashery.com */
+/* Version: b13fe65ca28d2e568c6ed5d7f06581183df8f2ff */
+/* Source: https://github.com/nicolahery/markdownpad-github */
+
+/* RESET
+=============================================================================*/
+
+html, body, div, span, applet, object, iframe, h1, h2, h3, h4, h5, h6, p, blockquote, pre, a, abbr, acronym, address, big, cite, code, del, dfn, em, img, ins, kbd, q, s, samp, small, strike, strong, sub, sup, tt, var, b, u, i, center, dl, dt, dd, ol, ul, li, fieldset, form, label, legend, table, caption, tbody, tfoot, thead, tr, th, td, article, aside, canvas, details, embed, figure, figcaption, footer, header, hgroup, menu, nav, output, ruby, section, summary, time, mark, audio, video {
+  margin: 0;
+  padding: 0;
+  border: 0;
+}
+
+/* BODY
+=============================================================================*/
+
+body {
+  font-family: Helvetica, arial, freesans, clean, sans-serif;
+  font-size: 14px;
+  line-height: 1.6;
+  color: #333;
+  background-color: #fff;
+  padding: 20px;
+  max-width: 960px;
+  margin: 0 auto;
+}
+
+body>*:first-child {
+  margin-top: 0 !important;
+}
+
+body>*:last-child {
+  margin-bottom: 0 !important;
+}
+
+/* BLOCKS
+=============================================================================*/
+
+p, blockquote, ul, ol, dl, table, pre {
+  margin: 15px 0;
+}
+
+/* HEADERS
+=============================================================================*/
+
+h1, h2, h3, h4, h5, h6 {
+  margin: 20px 0 10px;
+  padding: 0;
+  font-weight: bold;
+  -webkit-font-smoothing: antialiased;
+}
+
+h1 tt, h1 code, h2 tt, h2 code, h3 tt, h3 code, h4 tt, h4 code, h5 tt, h5 code, h6 tt, h6 code {
+  font-size: inherit;
+}
+
+h1 {
+  font-size: 28px;
+  color: #000;
+}
+
+h2 {
+  font-size: 24px;
+  border-bottom: 1px solid #ccc;
+  color: #000;
+}
+
+h3 {
+  font-size: 18px;
+}
+
+h4 {
+  font-size: 16px;
+}
+
+h5 {
+  font-size: 14px;
+}
+
+h6 {
+  color: #777;
+  font-size: 14px;
+}
+
+body>h2:first-child, body>h1:first-child, body>h1:first-child+h2, body>h3:first-child, body>h4:first-child, body>h5:first-child, body>h6:first-child {
+  margin-top: 0;
+  padding-top: 0;
+}
+
+a:first-child h1, a:first-child h2, a:first-child h3, a:first-child h4, a:first-child h5, a:first-child h6 {
+  margin-top: 0;
+  padding-top: 0;
+}
+
+h1+p, h2+p, h3+p, h4+p, h5+p, h6+p {
+  margin-top: 10px;
+}
+
+/* LINKS
+=============================================================================*/
+
+a {
+  color: #4183C4;
+  text-decoration: none;
+}
+
+a:hover {
+  text-decoration: underline;
+}
+
+/* LISTS
+=============================================================================*/
+
+ul, ol {
+  padding-left: 30px;
+}
+
+ul li > :first-child, 
+ol li > :first-child, 
+ul li ul:first-of-type, 
+ol li ol:first-of-type, 
+ul li ol:first-of-type, 
+ol li ul:first-of-type {
+  margin-top: 0px;
+}
+
+ul ul, ul ol, ol ol, ol ul {
+  margin-bottom: 0;
+}
+
+dl {
+  padding: 0;
+}
+
+dl dt {
+  font-size: 14px;
+  font-weight: bold;
+  font-style: italic;
+  padding: 0;
+  margin: 15px 0 5px;
+}
+
+dl dt:first-child {
+  padding: 0;
+}
+
+dl dt>:first-child {
+  margin-top: 0px;
+}
+
+dl dt>:last-child {
+  margin-bottom: 0px;
+}
+
+dl dd {
+  margin: 0 0 15px;
+  padding: 0 15px;
+}
+
+dl dd>:first-child {
+  margin-top: 0px;
+}
+
+dl dd>:last-child {
+  margin-bottom: 0px;
+}
+
+/* CODE
+=============================================================================*/
+
+pre, code, tt {
+  font-size: 12px;
+  font-family: Consolas, "Liberation Mono", Courier, monospace;
+}
+
+code, tt {
+  margin: 0 0px;
+  padding: 0px 0px;
+  white-space: nowrap;
+  border: 1px solid #eaeaea;
+  background-color: #f8f8f8;
+  border-radius: 3px;
+}
+
+pre>code {
+  margin: 0;
+  padding: 0;
+  white-space: pre;
+  border: none;
+  background: transparent;
+}
+
+pre {
+  background-color: #f8f8f8;
+  border: 1px solid #ccc;
+  font-size: 13px;
+  line-height: 19px;
+  overflow: auto;
+  padding: 6px 10px;
+  border-radius: 3px;
+}
+
+pre code, pre tt {
+  background-color: transparent;
+  border: none;
+}
+
+kbd {
+    -moz-border-bottom-colors: none;
+    -moz-border-left-colors: none;
+    -moz-border-right-colors: none;
+    -moz-border-top-colors: none;
+    background-color: #DDDDDD;
+    background-image: linear-gradient(#F1F1F1, #DDDDDD);
+    background-repeat: repeat-x;
+    border-color: #DDDDDD #CCCCCC #CCCCCC #DDDDDD;
+    border-image: none;
+    border-radius: 2px 2px 2px 2px;
+    border-style: solid;
+    border-width: 1px;
+    font-family: "Helvetica Neue",Helvetica,Arial,sans-serif;
+    line-height: 10px;
+    padding: 1px 4px;
+}
+
+/* QUOTES
+=============================================================================*/
+
+blockquote {
+  border-left: 4px solid #DDD;
+  padding: 0 15px;
+  color: #777;
+}
+
+blockquote>:first-child {
+  margin-top: 0px;
+}
+
+blockquote>:last-child {
+  margin-bottom: 0px;
+}
+
+/* HORIZONTAL RULES
+=============================================================================*/
+
+hr {
+  clear: both;
+  margin: 15px 0;
+  height: 0px;
+  overflow: hidden;
+  border: none;
+  background: transparent;
+  border-bottom: 4px solid #ddd;
+  padding: 0;
+}
+
+/* TABLES
+=============================================================================*/
+
+table th {
+  font-weight: bold;
+}
+
+table th, table td {
+  border: 1px solid #ccc;
+  padding: 6px 13px;
+}
+
+table tr {
+  border-top: 1px solid #ccc;
+  background-color: #fff;
+}
+
+table tr:nth-child(2n) {
+  background-color: #f8f8f8;
+}
+
+/* IMAGES
+=============================================================================*/
+
+img {
+  max-width: 100%
+}
+</style>
+</head>
+<body>
+<h1>JDBC</h1>
+<h2>DAO</h2>
+<p>DAO 用于封装复杂的数据库操作, 留给使用者简单使用界面.用于简化业务功能的开发.</p>
+<p>一般情况下DAO封装数据的CRUD(增删改查)方法</p>
+<p>在使用DAO封装数据操作以后可以实现简洁的数据操作 如:</p>
+<pre><code>DeptDao deptDao = new DeptDaoImpl();
+Dept dept = new Dept(100, &quot;乐高机器人&quot;, &quot;望京&quot;);
+deptDao.save(dept);
+</code></pre>
+
+<blockquote>
+<p>如上代码就可以实现将新加部门信息,并且保存到数据库中</p>
+</blockquote>
+<p>DAO实现步骤:</p>
+<ol>
+<li>添加实体类, 用于封装数据信息</li>
+<li>添加DAO接口, 定义CRUD方法</li>
+<li>实现DAO接口, 实现CRUD方法</li>
+<li>测试 CRUD 方法.</li>
+</ol>
+<blockquote>
+<p>CRUD的中文意思就是:增删改查</p>
+</blockquote>
+<h3>准备数据:</h3>
+<pre><code>create table dept(
+    deptno number(8),
+    dname varchar2(50),
+    loc varchar2(100)
+);
+create sequence dept_seq;
+</code></pre>
+
+<h3>定义实体类</h3>
+<pre><code>public class Dept {
+    private int deptno;
+    private String name;
+    private String location;
+
+    public Dept() {
+    }
+    /**
+     * 序号由数据库生成
+     * @param name
+     * @param location
+     */
+    public Dept(String name, String location){
+        this.name = name;
+        this.location=location;
+    }
+    public int getDeptno() {
+        return deptno;
+    }
+    public void setDeptno(int deptno) {
+        this.deptno = deptno;
+    }
+    public String getName() {
+        return name;
+    }
+    public void setName(String name) {
+        this.name = name;
+    }
+    public String getLocation() {
+        return location;
+    }
+    public void setLocation(String location) {
+        this.location = location;
+    }
+    @Override
+    public String toString() {
+        return &quot;Dept [deptno=&quot; + deptno + &quot;, name=&quot; + name + &quot;, location=&quot; + location + &quot;]&quot;;
+    }
+    @Override
+    public int hashCode() {
+        final int prime = 31;
+        int result = 1;
+        result = prime * result + deptno;
+        return result;
+    }
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj)
+            return true;
+        if (obj == null)
+            return false;
+        if (getClass() != obj.getClass())
+            return false;
+        Dept other = (Dept) obj;
+        if (deptno != other.deptno)
+            return false;
+        return true;
+    }
+
+}
+</code></pre>
+
+<h3>定义DAO范围接口</h3>
+<pre><code>/**
+ * 声明部门信息的增删改查(CRUD)方法 
+ */
+public interface DeptDao {
+    //保存部门信息
+    void save(Dept dept);
+    //根据部门号删除部门信息
+    boolean delete(int deptno);
+    void update(Dept dept);
+    Dept findById(int deptno);
+    List&lt;Dept&gt; findAll();
+}
+</code></pre>
+
+<h3>实现DAO接口</h3>
+<pre><code>public class DeptDaoImpl implements DeptDao {
+    //将部门信息保存到数据库
+    public void save(Dept dept) {
+        //部门信息
+        //dept.getName() 
+        //dept.getLocation()
+        String sql=&quot;insert into dept &quot;
+            + &quot;(deptno, dname, loc) &quot;
+            + &quot;values (dept_seq.nextval,?,?)&quot;;
+        //执行SQL
+        Connection conn = null;
+        try{
+            conn = DBUtils.getConnection();
+            String[] cols={&quot;deptno&quot;};
+            PreparedStatement ps=
+                conn.prepareStatement(sql,cols);
+            ps.setString(1, dept.getName());
+            ps.setString(2, dept.getLocation()); 
+            ps.executeUpdate();
+            ResultSet rs=ps.getGeneratedKeys();
+            while(rs.next()){
+                int no = rs.getInt(1);
+                //获取数据库生成的序号
+                dept.setDeptno(no); 
+            }
+        }catch(Exception e){
+            e.printStackTrace();
+            throw new RuntimeException(e);
+        }finally{
+            DBUtils.close(conn);
+        }
+    }
+
+    public boolean delete(int deptno) {
+        String sql = &quot;delete from dept &quot;
+                + &quot;where deptno=?&quot;;
+        Connection conn = null;
+        try {
+            conn = DBUtils.getConnection();
+            PreparedStatement ps=
+                conn.prepareStatement(sql);
+            ps.setInt(1, deptno);
+            int n=ps.executeUpdate();
+            return n==1;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return false;
+        } finally {
+            DBUtils.close(conn);
+        }
+
+    }
+
+    public void update(Dept dept) {
+        String sql = &quot;update dept &quot;
+                + &quot;set dname=?, loc=? &quot;
+                + &quot;where deptno=?&quot;;
+        Connection conn = null;
+        try {
+            conn = DBUtils.getConnection();
+            PreparedStatement ps=
+                conn.prepareStatement(sql);
+            ps.setString(1, dept.getName());
+            ps.setString(2, dept.getLocation());
+            //部门号是唯一识别标志, 创建以后不能再修改
+            ps.setInt(3, dept.getDeptno()); 
+            ps.executeUpdate();
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw new RuntimeException(e);
+        } finally {
+            DBUtils.close(conn);
+        }
+    }
+
+    public Dept findById(int deptno) {
+        String sql = &quot;select deptno, dname, &quot;
+                + &quot;loc from dept &quot;
+                + &quot;where deptno=?&quot;;
+        Connection conn = null;
+        try {
+            conn = DBUtils.getConnection();
+            PreparedStatement ps=
+                conn.prepareStatement(sql);
+            ps.setInt(1, deptno);
+            ResultSet rs=ps.executeQuery();
+            //在查询结果情况下返回 null
+            //表示没有找到结果
+            Dept dept = null;
+            while(rs.next()){
+                dept = new Dept();
+                dept.setDeptno(rs.getInt(&quot;deptno&quot;));
+                dept.setName(rs.getString(&quot;dname&quot;)); 
+                dept.setLocation(rs.getString(&quot;loc&quot;));
+            }
+            return dept;
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw new RuntimeException(e);
+        }finally {
+            DBUtils.close(conn);
+        }
+    }
+
+    /**
+     * 在没有查询结果情况下, 要返回空集合
+     * 不要返回null, 好处是可以避免调用
+     * 者出现空指针异常.
+     */
+    public List&lt;Dept&gt; findAll() {
+        String sql = &quot;select deptno, dname, loc &quot;
+                + &quot;from dept&quot;;
+        Connection conn = null;
+        try {
+            conn = DBUtils.getConnection();
+            Statement st=conn.createStatement();
+            ResultSet rs=st.executeQuery(sql);
+            //创建空集合的目的在于,在没查询结果
+            //的情况下, 返回空集合
+            List&lt;Dept&gt; list=new ArrayList&lt;Dept&gt;();
+            while(rs.next()){
+                //将查询结果中的数据复制到dept对象中
+                Dept dept=new Dept();
+                dept.setDeptno(rs.getInt(&quot;deptno&quot;));
+                dept.setName(rs.getString(&quot;dname&quot;));
+                dept.setLocation(rs.getString(&quot;loc&quot;));
+                //将查询得到的每个对象加到集合中
+                list.add(dept);
+            }
+            return list;//返回查询结果
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw new RuntimeException(e);
+        } finally {
+            DBUtils.close(conn);
+        }
+    }
+
+}
+</code></pre>
+
+<blockquote>
+<p>可以逐个实现DAO方法, 每实现一个DAO方法就进行单元单元测试</p>
+</blockquote>
+<h3>测试:</h3>
+<p>测试添加方法:</p>
+<pre><code>public class Demo01 {
+    public static void main(String[] args) {
+        DeptDao dao = new DeptDaoImpl();
+        Dept dept = 
+            new Dept(&quot;乐高机器人&quot;, &quot;望京&quot;);
+        System.out.println(dept); 
+        dao.save(dept);
+        //dept信息中包含刚刚生成的序号
+        System.out.println(dept);
+    }
+}
+</code></pre>
+
+<p>测试删除方法:</p>
+<pre><code>public class Demo02 {
+    public static void main(String[] args) {
+        DeptDao dao = new DeptDaoImpl();
+        int n = 2;
+        boolean b = dao.delete(n);
+        System.out.println(b); 
+    }
+}
+</code></pre>
+
+<p>测试查找方法:</p>
+<pre><code>/**
+ * 测试:根据ID查找部门信息 
+ */
+public class Demo03 {
+    public static void main(String[] args) {
+        DeptDao dao = new DeptDaoImpl();
+        Dept dept = dao.findById(2);
+        System.out.println(dept); 
+    }
+}
+</code></pre>
+
+<p>测试更新方法:</p>
+<pre><code>/**
+ * 测试:更新部门信息
+ */
+public class Demo04 {
+    public static void main(String[] args) {
+        DeptDao dao = new DeptDaoImpl();
+        Dept dept = dao.findById(1);
+        System.out.println(dept); 
+        dept.setLocation(&quot;中关村&quot;); 
+        dao.update(dept);
+        Dept d=dao.findById(1);
+        System.out.println(d);
+    }
+}
+</code></pre>
+
+<p>测试查询所有部门:</p>
+<pre><code>/**
+ * 测试:查询全部部门信息
+ */
+public class Demo05 {
+    public static void main(String[] args) {
+        DeptDao dao = new DeptDaoImpl();
+        List&lt;Dept&gt; list= dao.findAll();
+        for (Dept dept : list) {
+            System.out.println(dept);
+        }
+    }
+}
+</code></pre>
+
+<h2>请同学自行完成 员工表的 DAO ... 并且测试</h2>
+
+</body>
+</html>
+<!-- This document was created with MarkdownPad, the Markdown editor for Windows (http://markdownpad.com) -->
