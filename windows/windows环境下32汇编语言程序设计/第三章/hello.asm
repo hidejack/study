@@ -56,9 +56,37 @@ szText          db      'Hello,World !'.0
 ;-----------------------------------------------------------
             .code
 start:
+;-----------------------------------------------------------
+;函数调用演示
+;-----------------------------------------------------------
             invoke  MessageBox,NULL,offset szText,\     ;\ 换行符
                     offset szCaption,MB_OK
             invoke  ExitProcess,NULL
+
+;-----------------------------------------------------------
+;一段局部变量反汇编后的代码演示
+;-----------------------------------------------------------
+TestProc        proc
+                local       @loc1:dword,@loc2:word
+                local       @loc3:byte
+
+                mov         eax,@loc1
+                mov         ax,@loc2
+                mov         al,@loc3
+
+;反汇编后为
+                push        ebp
+                mov         ebp,esp                 ;ebp 用作局部变量指针
+                add         esp,0FFFFFFF8H          ;堆栈预留空间 0FFFFFFF8 = -8
+                mov         eax,dword ptr [ebp-04]
+                mov         ax,word ptr [ebp-06]
+                mov         ax,byte ptr [ebp-07]
+;               leave 指令等价： mov esp,ebp
+;                               pop ebp
+                leave
+                ret
+;-----------------------------------------------------------
+
 
 end start
 
