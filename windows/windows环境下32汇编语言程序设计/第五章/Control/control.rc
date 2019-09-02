@@ -1,0 +1,47 @@
+#include                    <resource.h>
+
+#define ICO_MAIN            0x1000
+#define DLG_MAIN            1
+#define IDB_1               1
+#define IDB_2               2
+#define IDC_ONTOP           101
+#define IDC_SHOWBMP         102
+#define IDC_ALOW            103
+#define IDC_MODALFRAME      104
+#define IDC_THICKFRAME      105
+#define IDC_TITLETEXT       106
+#define IDC_CUSTOMTEXT      107
+#define IDC_BMP             108
+#define IDC_SCROLL          109
+#define IDC_VALUE           110
+
+ICO_MAIN            ICON    "Main.ico"
+IDM_1               BITMAP  "1.bmp"
+IDM_2               BITMAP  "2.bmp"
+
+DLG_MAIN            DIALOG  193,180,310,134
+STYLE               DS_MODALFRAME | WS_POPUP | WS_VISIBLE | WS_CAPTION | WS_SYSMENU | WS_THICKFRAME
+CAPTION             "dialog control model demo!"
+FONT                9,"Arial"
+{
+        GROUPBOX            "option" ,-1,55,5,120,100
+        AUTOCHECKBOX        "aws in front",IDC_ONTOP,65,20,100,12
+        AUTOCHECKBOX        "show img ",IDC_SHOWBMP,65,35,100,12
+        AUTOCHECKBOX        "allow change img",IDC_ALOW,65,50,100,12
+        CONTROL             "",-1,"Static",SS_ETCHEDHORZ | WS_CHILD | WS_VISIBLE,60,65,110,1
+        AUTORADIOBUTTON     "Modal frame(&Modal Frame)",IDC_MODALFRAME,65,70,100,12,WS_TABSTOP
+        GROUPBOX            "Title word",-1,180,5,125,100,BS_GROUPBOX
+        COMBOBOX            IDC_TITLETEXT,190,20,105,70,CBS_DROPDOWNLIST | WS_TABSTOP
+        LTEXT               "self define word:",-1,190,40,105,10
+        EDITTEXT            IDC_CUSTOMTEXT,190,55,105,12
+        LTEXT               "please choose the word that show on the title bar in here,or you can choose define and input !",
+                            -1,191,73,105,26,WS_BORDER
+        CONTROL             "",-1,"Static",SS_ETCHEDHORZ | WS_CHILD | WS_VISIBLE,5,110,300,1
+        DEFPUSHBUTTON       "change img(&C)",IDOK,200,115,50,14
+        PUSHBUTTON          "Exit(&X)",IDCANCEL,255,115,50,14
+        CONTROL             IDB_1,IDC_BMP,"Static",SS_BITMAP | WS_CHILD | WS_VISIBLE,5,5,40,95
+        SCROLLBAR           IDC_SCROLL,6,119,125,10
+        LTEXT               "0",IDC_VALUE,138,120,50,8
+}
+
+

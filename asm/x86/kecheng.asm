@@ -351,5 +351,12 @@ mov ah,3
 int 13H
 
 
+pusha  =		push ax,cx,dx,bx,sp,bp,si,di
+
+pushad =		push eax,ecx,edx,ebx,esp,ebp,esi,edi
+
+popa   =		pop di,si,bp,sp,bx,dx,cx,ax
+
+popad  =		pop edi,esi,ebp,esp,ebx,edx,ecx,eax
 
 

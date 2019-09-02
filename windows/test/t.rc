@@ -1,0 +1,79 @@
+#include                    <resource.h>
+
+#define ICO_MAIN            0x1000
+#define IDM_MAIN            0x2000
+#define IDA_MAIN            0x2000
+#define IDM_OPEN            0x4101
+#define IDM_OPTION          0x4102
+#define IDM_EXIT            0x4103
+#define IDM_SETFONT         0x4201
+#define IDM_SETCOLOR        0x4202
+#define IDM_INACT           0x4203
+#define IDM_GRAY            0x4204
+#define IDM_BIG             0x4205
+#define IDM_SMALL           0x4206
+#define IDM_LIST            0x4207
+#define IDM_DETAIL          0x4208
+#define IDM_TOOLBAR         0x4209
+#define IDM_TOOLBARTEXT     0x4210
+#define IDM_INPUTBAR        0x4211
+#define IDM_STATUSBAR       0x4212
+#define IDM_HELP            0x4301
+#define IDM_ABOUT           0x4302
+
+ICO_MAIN            ICON    "Main.ico"
+IDM_MAIN            menu    discardable
+
+BEGIN
+            popup   "file(&F)"
+
+            BEGIN
+                    menuitem            "open file(&O)...",IDM_OPEN
+                    menuitem            "close file(&C)...",IDM_OPTION
+                    menuitem            separator
+                    menuitem            "exit(&X)",IDM_EXIT
+            END
+
+            popup   "look(&V)"
+
+            BEGIN
+                    menuitem            "font(&F)...\tAlt+F",IDM_SETFONT
+                    menuitem            "bgcolor(&B)...\tCtrl+Alt+B",IDM_SETCOLOR
+                    menuitem            separator
+                    menuitem            "grayed menu" ,IDM_GRAY,GRAYED
+                    menuitem            "ban menu" ,IDM_INACT,INACTIVE
+
+                    menuitem            separator
+                    menuitem            "big_sign(&G)",IDM_BIG
+                    menuitem            "small_sign(&M)",IDM_SMALL
+                    menuitem            "list(&L)",IDM_LIST
+                    menuitem            "detail(&D)",IDM_DETAIL
+                    menuitem            separator
+
+                    popup               "tool(&T)"
+
+                    BEGIN
+                            menuitem            "button(&S)",IDM_TOOLBAR
+                            menuitem            "text(&C)",IDM_TOOLBARTEXT
+                            menuitem            "inputBar(&I)",IDM_INPUTBAR
+                    END
+
+                    menuitem            "statusbar(&U)",IDM_STATUSBAR
+            END
+
+            popup   "help(&H)",HELP
+
+            BEGIN
+                    menuitem            "help theme(&H)\tF1",IDM_HELP
+                    menuitem            separator
+                    menuitem            "about me(&A)...",IDM_ABOUT
+            END
+END
+
+IDA_MAIN        accelerators
+BEGIN
+                VK_F1,  IDM_HELP,VIRTKEY
+                "B",    IDM_SETCOLOR,VIRTKEY,CONTROL,ALT
+                "F",    IDM_SETFONT,VIRTKEY,ALT
+END
+

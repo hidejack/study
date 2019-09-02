@@ -571,17 +571,161 @@
             如果要显示 “Alt + F”字符，可以在两者之间加\t 表示插入一个Tab字符
             写为“菜单（&F）...\tAlt+F”
 ####  1.3 使用菜单和加速键
+   - 加载菜单
+
+      加载菜单两种方式
+      1：注册窗口类的时候指定类的默认菜单
+      2：建立窗口的时候在参数中指定菜单句柄
+   
+   - 加载加速键
+
+      加速键 核心代码：TranslateAccelarator
+      Windows 检查加速键资源，看按键是否符合某个加速键，如果符合则向目标窗口发送：WM_COMMAND 或 WM_SYSCOMMAND 消息，并返回true。
+      如果不符合则不进行任何处理并返回FALSE
+   - 菜单和加速键消息
+
+      当用户选择菜单时，Windows 向菜单所属窗口发送 ： WM_COMMAND 消息。
+      当用户按下一个加速键时，Windows 向TranslateAccelerator函数指定的目标窗口发送WM_COMMAND消息
+
+   - 菜单项的修改
+   ![menu_update](第五章/5-1-3.png)
+
+   - 使用系统菜单
+
+      系统菜单：按下了标题栏图标后弹出的菜单。
+      选择系统菜单的菜单项后，Windows向窗口发送的是WM_SYSCOMMAND消息而非WM_COMMAND.
+      默认的系统菜单中已经有还原(SC_RESTORE)，移动(SC_MOVE) ，大小(SC_SIZE)，最大化(SC_MAXIMIZE)，最小化(SC_MINIMIZE)和关闭(SC_CLOSE)等菜单项。一般不进行处理。交给DefWindowProc处理
+
+   - 右键弹出菜单
+
+      用户在客户区按下鼠标右键，弹出一个菜单。这个功能是用TrackPopupMenu实现的。
+      invoke   TrackPopupMenu,hMenu,uFlags,x,y,nReserved,hWnd,lpRect
+      执行后在参数指定的x，y 位置弹出一个属于hWnd 窗口的菜单。菜单句柄是hMenu .
+      函数中的坐标是以整个屏幕左上角为基准的！
+
+   - 菜单状态的检测和设置
+
+      对菜单项状态的检测可以用GetMenuState函数来完成。
+      invoke   GetMenuState,hMenu,uId,uFlags
+      hMenu 菜单的句柄
+      uId 定位要检测的菜单项
+      返回-1 为失败
+
+   - 其他菜单函数
+
+      图标和静态光标的文件扩展名为别是：ico和cur
+      ani：动态光标文件
 ### 2.图标和光标
 ####  2.1 图标和光标的资源定义
 ####  2.2 使用图标和光标
 ### 3.位图
 ####  3.1 位图简介
+   位图（Bitmap） 是Windows 操作系统存储图像的方式。图像中的每个像素对应存储器中的一个或多个数据位。
+   单色位图每个像素对应1位
+   16色位图每个像素对应4位。
+   256色为8位
+   全彩色为24位
+   
+   - 位图的优点
+
+      操作的速度很快。
+
+   - 缺点
+
+      尺寸问题，占用空间大
+      缩放问题。位图缩放后要对原来的像素数据进行插值计算，不可避免会失真。
+
+   - 使用前必须清楚几个概念：位图、设备无关位图和位图文件
 ####  3.2 在资源中定义位图
 ### 4. 对话框
 ####  4.1 对话框简介
+   - 对话框的类型
+
+      对话框分两类：model 对话框 和modeless对话框。即模态的和非模态的！
+      当显示非模态对话框时，用户可以随意在这个对话框和其他窗口之间切换。
+      当显示模态对话框时，用户在关闭对话框之前不允许切换到同一程序的其他窗口中，但可以切换到其他程序的窗口中。
+      如果显示的是操作系统所属的模态对话框（系统模态） 则切换到其他任何程序的窗口都是不允许的。
+   
+   
+   - 对话框的工作原理
+
+      DialogBoxParam : 建立模态对话框
+      CreateDialogParam : 建立非模态对话框
+      这两个函数都不需要创建对话框的窗口类
+      Windows在这两个函数的内部调用CreateWindowEx来建立对话框。
+      
+      模态对话框：Windows会在其内部建立一个消息循环。在这个消息循环中把消息发送给对话框管理器，对话框管理器在处理消息的过程中会调用用户定义的对话框过程。对话框关闭，Windows退出内建的消息循环。并从DialogBoxParam函数返回。
+      非模态对话框：CreateDialogParam 函数在创建对话框后直接返回，对话框窗口的消息是通过用户程序中的消息循环派送的。
+
+   > 模态对话框的特性，可以很方便的用来做小程序的主窗口
 ####  4.2 对话框的资源定义
+   - 对话框资源定义的语法
+
+         对话框ID    DIALOG   [DISCARDABLE]     x坐标，y坐标，宽度，高度
+         [可选属性]
+         BEGIN
+               子窗口控件
+               ...
+         END
+   - 对话框的可选属性
+   ![dialog_option](第五章/5-4-2.jpg)
+
+   - Tab 停留位和组
+
+      Tab停留位：用户可以使用Tab键将输入焦点切换到下一个有WS_TABSTOP风格的子窗口控件上，也可以用shift + Tab 键切换到上一个，Tab键切换的顺序就叫Tab停留位。
+      Tab 停留位不是按照子窗口控件的坐标位置自动排列的，而是按照子窗口空间在资源脚本文件中的定义顺序来排列的。
 ####  4.3 使用对话框
+   - 创建模态对话框
+
+         格式：
+         invoke      DialogBoxParam,hInstance,lpTemplateName,hWndParent,lpDialogFunc,dwInitParam
+         
+         hInstance 和 lpTemplateName ：函数从hInstance 参数指定的模块中装入lpTemplateName 参数指定的对话框资源，然后显示对话框窗口。
+         hWndParent：对话框的父窗口，对话框关闭之前将无法切换到父窗口所属的其他窗口中。
+         lpDialogFunc : 指定了对话框过程的地址。
+         dwInitParam:当作 WM_INITDIALOG 消息的lParam 传给对话框过程。
+      
+      要结束对话框，必须在对话框过程的WM_CLOSE 消息中使用 EndDialog 函数。不能使用DestroyWindow参数。
+   
+   - 创建非模态对话框
+
+         格式：
+         invoke      CreateDialogParam,hInstance,lpTemplateName,hWndParent,lpDialogFunc,dwInitParam
+         mov         hDlg,eax
+   - CreateDialogParam 和 DialogBoxParam 使用的几个不同点
+         1. CreateDialogParam在创建对话框后，会 根据对话框模板的风格是否定义了WS_VISIBLE来决定是否显示对话框窗口。如果定义了则显示，没有的话则需要程序自行调用ShowWindow 来显示。
+         而 DialogBoxParam 函数不管是否定义了WS_VISIBLE风格都会显示对话框
+         2. CreateDialogParam在建立对话框窗口后直接返回。返回值是对话框窗口的句柄；
+         DialogBoxParam 要在对话框关闭后才返回，返回值是EndDialog中的dwResult参数
+         3. 在CreateDialogParam 返回后，应用程序在自己的消息循坏中获取对话框消息。
+         所以如果要用非模态对话框做程序的主窗口，消息循环的代码还是要写的。
+         而DialogBoxParam 使用Windows 为它内建的消息循环
+         4. 关闭非模态对话框仍然使用DestroyWindow 函数！
+
+   - 对话框过程
+
+         对话框过程和普通的窗口过程在使用上的区别：
+         1. 窗口过程对应于不同的消息有各种不同含义的返回值，而对话框过程返回BOOL类型的值，返回TRUE 表示已经处理了某条消息，返回FLASE 表示没有处理。
+         对话框管理器代码会根据返回值决定是否继续处理某条消息！（唯一的例外：WM_INITDIALOG 消息）
+         2. 对于不处理的消息，不需要调用DefWindowProc 来处理，这事情由对话框管理器来做。
+
+      > 对话框管理器不会把WM_CREATE 消息转发给对话框过程。它会以WM_INITDIALOG消息来调用对话框过程。这里可以做一些程序的初始化操作！
+      
+            WM_INITDIALOG 消息的返回值有点特殊，如果程序想自行设置输入焦点，那么可以用SetFocus函数把输入焦点设置到需要的子窗口控件上。然后返回FALSE。如果 返回TRUE，Windows会自动将输入焦点设置到第一个有WS_TABSTOP 的子窗口控件上。
+      > 对话框过程在WM_COMMAND消息中处理子窗口控件发送的命令！！wParam 是子窗口控件的ID
 ####  4.4 在对话框中使用子窗口控件
+   - 子窗口控件的定义
+
+         1. CONTROL     文本，ID，类，风格，x，y，宽度，高度[,扩展风格]
+         文本：控件的初始化值
+         ID：子窗口向对话框过程发送WM_COMMAND 中用的ID值
+         类：可以是按钮（Button），静态（Static），编辑（Edit），滚动条（ScrollBar），列表框（ListBox）和组合框（ComboBox），另外还包括一些通用控件如：日期（SysDateTimePick32），月历（SysMonthCal32），热键（msctls_hotkey32）和列表（SysListView32）等！
+
+         2. 控件名称    [文本,]  ID,x,y,宽度，高度[,风格] [,扩展风格]
+
+   - 资源脚本中使用的控件名称
+   ![5-4-4](第五章/5-4-4.jpg)
+
 ### 5.字符串资源
 ### 6.版本信息资源
 #### 6.1 版本信息资源的定义
