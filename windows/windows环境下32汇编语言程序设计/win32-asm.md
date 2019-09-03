@@ -726,12 +726,76 @@
    - 资源脚本中使用的控件名称
    ![5-4-4](第五章/5-4-4.jpg)
 
+   - 子窗口控件的通用使用方法
+   > 从ID获取子窗口句柄
+
+         invoke  GetDlgItem,hDlg,dwIDDlgItem
+         mov     hDlgItem,eax
+   > 从及窗口句柄获取ID
+
+         invoke   GetDlgCtrlID,hWndCtrl
+         invoke   GetWindowLong,hWndCtrl,GWL_ID
+   > 向控件发送消息 
+
+         1. 先用GetDlgItem 获取子窗口句柄，在用SendMessage 函数 。
+         2. invoke      SendDlgItemMessage,hDlg,dwIDDlgItem,Msg,wParam,lParam
+   
+   - 使用单选框和复选框
+
+   单选钮和复选框都是Button类。
+   > 查看一个按钮是否被选中
+
+         invoke IsDlgButtonChecked,hDlg,nIDButton
+
+   > 设置按钮状态
+
+         invoke   CheckDlgButton,hDlg,nIDButton,uCheck
+         针对单选钮的专用函数
+         invoke      CheckRadioButton,hDlg,nIDFirstButton,nIDLastButton,nIDCheckButton
+
+   - 使用静态控件
+
+   静态控件是基于Static类的子窗口控件，它们不向对话框发送WM_COMMAND 消息。
+
+   - 使用文本编辑控件
+
+   文本编辑控件是基于Edit类的控件。
+
+   - 使用滚动条
+
+         定义水平滚动条：
+         SCROLLBAR      IDC_SCROLL,1,1,1,1     //默认风格是SBS_HORZ
+         定义垂直滚动条
+         SCROLLBAR      IDC_SCROLL,x,y,weight,height,SBS_VERT
+
+         水平滚动条向对话框窗口发送WM_HSCROLL 消息。
+         垂直滚动条向对话框窗口发送WM_VSCROLL 消息。
+
+   - 使用组合框
+
+   - 使用列表框
+
 ### 5.字符串资源
+
+   > 在资源脚本中定义字符串的语法
+
+         STRINGTABLE    [DISCARDABLE]
+         BEGIN
+               字符串 ID1 “字符串1”
+               字符串 ID2 “字符串2”
+               ...
+         END
 ### 6.版本信息资源
 #### 6.1 版本信息资源的定义
 ####  6.2 在程序中检测版本信息
 ### 7. 二进制资源和自定义资源
 #### 7.1 使用二进制资源
+
+   1. 用FindResource（hInstance，lpName，lpType）查找资源，lpName为资源ID，lpType为RT_RCDATA,函数返回一个资源信息句柄
+   2. 用LoadResource （hInstance，hResInfo） 装入资源。hResInfo 是上一步得到的资源信息句柄。装入成功，函数返回一个资源句柄。
+   3. 用LockResource（hResData）将资源锁定到内存中，hResData 是上一步得到的资源句柄，函数返回资源装入的内存地址，程序就可以使用内存中的数据了。
+   4. 如果想知道 装入资源的大小，可以使用FindResource 返回的hResInfo 来调用SizeofResource（hInstance，hResInfo）从而得到资源大小。
+
 #### 7.2 使用自定义资源
 
 ---
@@ -740,6 +804,18 @@
 ## 第六章 定时器和Windows 时间
 ### 1.定时器
 #### 1.1 定时器简介
+   - SetTimer 申请定时器！
+
+         SetTimer 要求系统在指定的时间以后 “通知”应用程序。
+         如果申请成功，系统会以指定的时间周期调用SetTimer函数指定的回调函数，或者向指定的窗口过程发送WM_TIMER 消息。
+
+         注：
+         定时器的精度为55ms，即 1s 定时器，实际是 989ms 触发（55ms * 18）
+         定时器消息是一个低级别的消息。Windows 只有在消息队列中没有其他消息的情况才会发送WM_TIMER 消息。
+         如果窗口过程忙于处理某个消息没有返回，使消息队列中消息积累起来，那么WM_TIMER 消息就会被丢弃。且不会被补发！
+         消息队列中不会有多条WM_TIMER 消息，如果消息队列已经存在一条WM_TIMER 消息，还没来得及处理，又到了定时的时刻，那么两条WM_TIMER 会被合并成一条。
+
+   > 应用程序不能依靠定时器来保证某件事情必须在规定时刻被处理，也不能依赖对定时器消息计数来确定已经过去时间。
 #### 1.2 定时器的使用方法
 ### 2.Windows 时间
 #### 2.1 Windows 时间的获取和设置
@@ -749,10 +825,58 @@
 <br>
 
 ## 第七章 图形操作
+
+   - GDI (Graphics Device Interface)
+   
+         图形设备接口！
 ### 1.GDI原理
 #### 1.1 GDI程序的结构
+   - 客户区的刷新
+
+         当Windows检测到窗口被覆盖的地方需要恢复的时候，它会向用户程序发送一个WM_PAINT 消息。
+         消息中包括了需要恢复的区域，然后由用户程序来决定如何恢复被覆盖的内容。
+         如果程序无法及时响应 WM_PAINT 消息，那么窗口客户区 原先被覆盖的地方可能会被WIndows 暂时画成一块白色的矩形。或者根本就是保留被覆盖时的情形。
+
+   > 程序应该在收到 WM_PAINT 消息时，刷新屏幕！如果程序需要主动刷新，可以通过调用InvalidateRect 等函数引发一条WM_PAINT消息。
+
+   - GDI 程序的机构
+   ![GDI程序结构](第七章/7-1-1.png)
+
+   - WM_PAINT 消息
+      1. 当客户区光标移过窗口客户区以及图标拖过客户区这两种情况，Windows 总是自己保存被覆盖的区域并恢复它，并不需要发送WM_PAINT 消息通知用户程序
+      2. 当括弧客户区被自己的下拉式菜单覆盖，或者被自己弹出的对话框覆盖后，WIndows会尝试保存被覆盖的区域并在以后恢复它。如果因为某种原因无法保存并恢复，Windows会发送一个WM_PAINT 消息通知程序
+      3. 别的情况造成窗口的一部分从不可见变道可见，如程序从最小化的状态恢复、其他的窗口覆盖客户区后移开，用户改变了窗口的大小和用户按动滚动条等，这些情况，windows 会向窗口发送 WM_PAINT消息。
+      4. 一些函数会引发WM_PAINT 消息，如 UpdateWindow、InvalidateRect，以及InvalidateRgn函数等。
+   > 窗口程序收到 WM_PAINT 消息后，并不代表整个客户区都需要被刷新，有可能客户区被覆盖的区域只有一小块，这个区域就叫做无效区域。程序只需要更新这个区域。
+
+   WM_PAINT 也是一个低级别的消息！
+   Windows 为每个窗口维护一个 “绘图信息结构”，无效区域的坐标就在其中，每当消息循环空的时候，如果Windows 发现存在一个无效区域，就会放入一个WM_PAINT消息。
+
+   - WM_PAINT 消息的处理流程 ：
+```
+   .if      eax == WM_PAINT
+            invoke   BeginPaint,hWnd,addr stPs
+            ;刷新客户区代码
+            invoke   EndPaint,hWnd,addr stPs
+            xor      eax,eax
+            ret
+```
 #### 1.2 设备环境
+   通过设备环境来输出图形
+   - 什么是设备环境
+
+         不同设备的不同属性就构成了一个绘图的环境！
+         这个绘图的环境就是Win32 编程中图形操作的对象，一般叫做设备环境！
+         本质就是个数据结构，结构中保存的是设备的属性。
+   - 获取设备环境句柄（hDC）
+      1. BeginPaint 函数得到hDC
+      2. invoke  GetDC,hWnd      ...   invoke      ReleaseDC,hWnd,hDC
+      3. 绘图的对象是一个设备的时候 : 
+         CreateDC,lpszDriver,lpszDevice,lpszOutput,lpInitData    ...  deleteDC
 #### 1.3 色彩和坐标
+   - Windows 中的色彩
+
+   - Windows 中的坐标系
 ### 2.绘制图形
 #### 2.1 画笔和笔刷
 #### 2.2 绘制像素点
@@ -816,6 +940,10 @@
 
 # 系统篇
 ## 第十章 内存管理和文件操作
+> 内存映射文件
+
+   将文件的内容直接映射道内存中，并使用读写内存的方法来对文件进行读写。
+   内存映射文件是内存管理函数的一种。必须与文件操作函数配合使用。
 ### 1.内存管理
 #### 1.1 内存管理基础
 #### 1.2 内存的当前状态

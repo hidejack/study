@@ -202,7 +202,7 @@ _ProcDlgMain    proc            uses ebx edi esi,hWnd,wMsg,wParam,lParam
                                 mov         dwPos,0
                                 @@:
                                 cmp         dwPos,100
-                                jle         @F 
+                                jle         @F
                                 mov         dwPos,100
                                 @@:
                                 invoke      SetDlgItemInt,hWnd,IDC_VALUE,dwPos,FALSE
