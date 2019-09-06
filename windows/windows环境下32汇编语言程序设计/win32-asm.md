@@ -1575,36 +1575,214 @@ CallNextHookEx 将消息传递给下一个钩子
 <br>
 
 ## 第十二章 多线程
+
 ### 1.进程和线程
+
+进程： 执行中的文件所使用的资源的总和。（虚拟地址空间，代码，数据，对象句柄，环境变量和用来执行代码的线程等）
+
 ### 2.多线程编程
 #### 2.1 一个单线程的问题程序
 #### 2.2 多线程的解决方法
+
+1. 多线程程序的结构。
+
+      处理用户界面的线程，负责窗口并处理窗口消息，主线程负责
+      工作线程：在后台运行，做需要长时间运行的工作
+
+2. 线程之间的通信
+- 通过全局变量
+- 通过发送消息
+- 通过事件对象
+
 #### 2.3 与线程有关的函数
+
+1. 创建线程：CreateThread
+
+2. 线程函数
+
+3. 终止线程：
+
+- 线程函数的自然退出，程序自动执行完毕
+- ExitThread 函数 终止线程，只能用于终止当前线程。
+- TerminateThread函数，可以在一个线程中强制终止另一个线程！（无法预测目标线程会在何处何时被终止！危险函数）
+- ExitProcess 函数结束进程。自动结束当前进程内所有线程的运行。
+
+> GetExitCodeThread可以检测到其他线程结束后的退出码
+
+4. 其他相关函数
+
+- SuspendThread ： 挂起运行中 的线程
+- ResumeThread：启动挂起的线程
+- GetExitCodeThread ： 检测其他线程结束后的退出码
+
 ### 3.使用事件对象控制线程
+
 #### 3.1 事件
+
+> 事件也是对象！
+
+      事件有两种状态：置位的，复位的。
+      如果想使用事件对象，需要首先使用CreateEvent 创建它。
+
+      CreateEvent,lpEventAttribute,bManualReset,bInitialState,lpName
+
+      lpEventAttribute:指向一个Security_Attributes结构，用来定义事件对象的安全属性。
+      bManualReset ： 指定事件对象是否需要手动复位，如果指定true，事件对象状态的复位工作必须使用ResetEvent函数手动完成。指定false，当测试事件的函数返回时（返回原因可能是超时，也可能是对象状态被置位引起），对象的状态会自动 复位
+      bInitialState：指定事件对象创建时的初始状态，true 置位状态 false 复位状态
+      lpName ： 指向一个以0结尾的字符串。用来指定事件对象的名称。
+
+      如果函数执行成功，函数返回事件的句柄，如果失败，则返回0
+
 #### 3.2 等待事件
+
+WaitForSingleObject，hHandle，dwMilliseconds
+WaitForSingleObject 函数可以测试的不仅是事件对象，也可以用来测试线程和进程等对象的状态。
+
 #### 3.3 进一步改进计数程序
 ### 4.线程间的同步
 #### 4.1 产生同步问题的原因
 #### 4.2 各种用于线程间同步的对象
 
+1. 使用事件对象进行线程间同步
+2. 使用临界区对象进行线程间同步
+3. 使用互斥量对象进行线程间同步
+4. 使用信号灯对象进行线程间同步
+
 ---
 <br>
 
 ## 第十三章 过程控制
+
 ### 1. 环境变量和命令行参数
+
 #### 1.1 环境变量
+
+1. 环境变量
+
+- 与系统运行相关的环境变量
+- 反映系统状态的环境变量
+- 应用程序自定义的环境变量
+
+2. 对环境变量进行操作
+
+- 命令提示符窗口： 设置：Set 变量= 内容   删除：Set 变量=
+- 程序中：
+
+   获取已知环境变量：GetEnvironmentVariable,lpVarName,lpBuffer,dwSize
+   枚举环境变量： GetEnvironmentStrings  (用完需要释放：FreeEnvironmentStrings)
+   设置：SetEnvironmentVariable,lpVarName,lpValue
+
 #### 1.2 命令行参数
+
+1. 什么是命令行参数
+
+2. 使用命令行参数
+
+      获取命令行参数：GetCommandLine, 返回一个指向命令行参数字符串的指针！
+
 ### 2.执行可执行文件
+
 #### 2.1 方法一：Shell 调用
+
+Win32中可以通过ShellExecute 和 WinExec 函数来执行另一个可执行文件。
+
+- WinExec函数的使用方法
+
+      invoke WinExec,lpCmdLine,dwCmdShow
+
+      lpCmdLine 指向一个以0结尾的字符串，包含可执行文件加上命令行参数，如果被执行文件 显示窗口，dwCmdShow参数可以指定窗口的显示方式。
+      成功执行：函数返回一个大于31的值
+      使用WinExec 函数执行文件和在Windows 开始菜单的运行中 输入 命令在效果上是一样的。
+
+- ShellExecute 用法
+
+      invoke      ShellExecute,hWnd,lpOperation,lpFile,lpParam,lpDirectory,dwCmdShow
+
+      这个函数既可以 执行可执行文件，也可以指定一个数据文件名让Windows自动查找关联到这个数据文件的可执行文件。并执行这个可执行文件来处理指定的数据文件。数据文件名会以命令行参数的方式传递给可执行文件。
+
+      hWnd: 指定被执行文件显示的窗口所属的父窗口
+      lpFile：指定文件名，文件名可以是可执行文件也可以是数据文件
+      lpOperation ： 指向一个表示执行方式的字符串。字符串取值如下
+            open：文件被打开，这时lpFile指定的文件名是可执行文件，目录名或数据文件名。
+            print：文件被打印，这时lpFile 必须是数据文件，如果是可执行文件，函数当作open操作
+            explore：浏览lpFile参数中指定的目录
+            此项默认是open
+      lpParameters：当lpFile参数指定了一个可执行文件，本参数用来指定命令行参数。如果是数据文件，则此项为null
+      lpDirectory：执行或打开文件时使用的默认目录
+      dwCmdShow：如果函数执行了一个可执行文件，这个参数指定窗口的打开方式
+
+      成功执行：函数返回一个大于31的值
+
 #### 2.2 方法二：创建进程
+
+CreateProcess 函数
+
+- 当一个进程被创建的时候，系统进行以下操作：
+
+      1.系统为进程创建一个内核对象，并将它的初始计数设置为1.与线程对象类型，进程对象只是一个比较小的数据结构。进程对象可以通过进程句柄来引用。
+      2.系统为进程创建一个虚拟地址空间，并将可执行文件装在到这个地址空间中。系统同时处理可执行文件的导入表，将导入表中登记的所有dll文件装入。
+      3.系统为进程建立一个主线程，主线程将从可执行文件的入口地址开始执行
+
+1. 创建进程
+
+2. 结束进程
+
+- 当一个进程结束的时候，系统进行以下操作：
+
+      1.进程创建或打开的所有对象句柄被关闭
+      2.进程中的所有线程终止
+      3.进程及进程中所有线程的状态被改为置位状态，以便让WaitForSingleObject函数正确检测。
+      4.进程对象中的退出码字段从STILL_ACTIVE被改为指定的退出码。
+
 ### 3. 进程调试
+
 #### 3.1 获取运行中的进程句柄
+
+1. 从窗口句柄获取进程句柄
+
+      GetWindowThreadProcessId：从一个窗口句柄获得创建该窗口进程的进程ID
+
+      OpenProcess ： 获取进程的句柄
+
+2. 从快照函数获取进程句柄
+
+      CreateToolhelo32Snapshot ： 获取一个进程的列表，额可以从列表中得到进程的ID，进程对应的可执行文件名和创建该进程的父进程ID等数据。
+
 #### 3.2 读写进程的地址空间
+
+1. 进程地址空间的读写函数
+
+      ReadProcessMemory：读取进程内存
+      WriteProcessMemory：写入进程地址空间
+
 #### 3.3 调试API的使用
+
 ### 4. 进程的隐藏
+
 #### 4.1 在Windows 9x中隐藏进程
+
+在Wondiws 9x 中 可以通过 Kernel32.dll 中的一个未公开函数来完成隐藏功能：RegisterServiceProcess，将一个进程注册为系统服务进程。
+
+将进程注册为系统服务进程即可隐藏。
+
 #### 4.2 Windows NT中的远程线程
+
+1. 进程显示的不是正确的名称。如果dll中执行代码，系统报告的进程名称是装入dll的进程名称而非dll本身的名称。
+
+2. 远程线程：在其他进程中创建一个线程，由于线程是被所属进程拥有的，所以任务管理器列出来的还是所属进程的名称
+
+- Windows NT 的远程操作函数
+
+      有两个函数可以实现上述功能：
+      VirtualAllocEx : 用来在其他进程的地址空间内申请内存。配合WriteProcessMemory 就可以在目标进程的地址空间造出代码（数据）
+      VitualAllocEx,hProcess,lpAddress,dwSize,flAllocationType,flProtect
+
+      CreateRemoteThread : 在其他进程内创建一个线程
+      CreateRemoteThread,hProcess,lpThreadAttributes,dwStackSize,lpStartAddress,lpParameter,dwCreationFlags,lpThreadId
+
+3. 远程线程存在得技术问题：代码得重定位问题和函数得导入问题！
+
+4. 远程线程得实现
 
 ---
 <br>

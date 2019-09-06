@@ -36,7 +36,7 @@ HookProc        proc        _dwCode,_wParam,_lParam
                             mov         ebx,_lParam
                             assume      ebx:ptr EVENTMSG
                             .if         [ebx].message == WM_KEYDOWN
-                                        invoke      GetKeyBoardState,addr @szKeyState
+                                        invoke      GetKeyboardState,addr @szKeyState
                                         invoke      GetKeyState,VK_SHIFT
                                         mov         @szKeyState + VK_SHIFT,al
                                         mov         ecx,[ebx].paramH

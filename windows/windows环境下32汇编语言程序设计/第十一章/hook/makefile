@@ -15,6 +15,7 @@ $(NAME).exe:$(NAME).obj $(NAME).res
 	ml $(ML_FLAG) $<
 .rc.res:
 	rc $<
+	
 .clean:
 	del *.obj
 	del *.exp

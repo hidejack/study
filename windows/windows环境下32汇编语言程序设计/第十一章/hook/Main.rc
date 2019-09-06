@@ -13,5 +13,5 @@ FONT                9,"Arial"
 
 {
     EDITTEXT        IDC_TEXT,5,5,224,158,ES_MULTILINE | ES_AUTOVSCROLL
-                    | WS_BORDER | DS_VSCROLL | WS_TABSTOP | ES_READONLY
-}
+                    | WS_BORDER | WS_VSCROLL | WS_TABSTOP | ES_READONLY
+} 
