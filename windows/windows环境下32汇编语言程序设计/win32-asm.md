@@ -1757,6 +1757,15 @@ CreateProcess 函数
 
 #### 3.3 调试API的使用
 
+1. 调试API
+
+DebugActiveProcess：让目标进程进入调试状态
+
+WaitForDebugEvent：获取调试事件
+
+3. 线程环境
+GetThreadContext  和  SetThreadContext ： 获取和重新设置线程环境
+
 ### 4. 进程的隐藏
 
 #### 4.1 在Windows 9x中隐藏进程
@@ -1781,6 +1790,8 @@ CreateProcess 函数
       CreateRemoteThread,hProcess,lpThreadAttributes,dwStackSize,lpStartAddress,lpParameter,dwCreationFlags,lpThreadId
 
 3. 远程线程存在得技术问题：代码得重定位问题和函数得导入问题！
+
+变通的法子：将dll载入目标进程执行
 
 4. 远程线程得实现
 
