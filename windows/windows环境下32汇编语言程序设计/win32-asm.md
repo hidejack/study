@@ -1813,19 +1813,65 @@ GetThreadContext  和  SetThreadContext ： 获取和重新设置线程环境
 <br>
 
 ## 第十五章 注册表和INI文件
+
 ### 1. 注册表和INI文件简介
+
+windows NT 系列操作系统中，注册表文件位于 ： Windows 安装目录下的System32\Config目录下
+注册表存储了系统的硬件配置，安装驱动程序列表，文件的关联信息，系统的网络配置和权限配置等。
+
 ### 2. INI文件的操作
+
 #### 2.1 INI文件的结构
+
+```
+;注释
+[section1 name]
+keyName1=value1
+keyName2-value2
+...
+;注释
+[section2 name]
+keyName1=value1
+keyName2=value2
+```
+
 #### 2.2 管理键值
+
+1. 键值的创建和删除
+
+- WritePrivateProfileString ：创建，写入键值 （也可以用于删除键值）
+
+2. 键值的获取
+
+- GetPrivateProfileString : 获取键值
+- GetPrivateProfileSectionName : 返回全部小节名称的列表
+
 #### 2.3 管理小节
+
 #### 2.4 使用不同的INI文件
+
 ### 3. 对注册表的操作
+
 #### 3.1 注册表的结构
+
+1. 注册表的数据组织方式
+
+类似文件目录结构
+
+2. 注册表中的根键
+
+系统定义的6种根键其实存放在不同的文件中。
+
 #### 3.2 管理子键
 #### 3.3 管理键值
 #### 3.4 子键和键值的枚举
 #### 3.5 注册表应用举例
 
+1. 设置开机自动运行
+
+Windows在启动并执行登录操作后，会将HKEY_LOCAL_MACHINE\Sofiware\Microsoft\Windows\CurrentVersion\Run 子健下的所有键值项枚举一遍，并将所有REG_SZ 类型的键值数据字符串当作一个文件名自动执行，所以在这个子健下设置一个键值项，让它的 键值数据是某个文件名字符串，这个文件就可以在windows 启动后自动运行。
+
+2. 设置文件关联
 ---
 <br>
 
@@ -1851,7 +1897,22 @@ GetThreadContext  和  SetThreadContext ： 获取和重新设置线程环境
 <br>
 
 ## 第十七章 PE文件
+
 ### 1. PE文件的结构
+
+> PE结构如下图
+
+![pe](第十七章/17-1.png)
+
+在PE文件中，代码，已初始化的数据，资源和重定位信息等数据被按照属性分类放到不同的Section中。
+每个节区的属性和位置等信息用一个IMAGE_SECTION_HEADER 结构来描述。所有的IMAGE_SECTION_HEADER 结构组成一个节表。
+节表数据在PE 文件中被放在所有节数据的前面。
+
+不同用途但是属性相同的数据（导入表、导出表以及.const 段指定的只读数据） 可能被放在同一个节中。
+所有PE文件还用一系列的数据目录结构IMAGE_DATA_DIRECTORY 来分别指明这些数据的位置。
+
+数据目录表和其他描述文件属性的数据合在一起称为PE 文件头。PE文件头被放在节和节表前面。
+
 #### 1.1 概论
 #### 1.2 DOS文件头和DOS块
 #### 1.3 PE文件头（NT文件头）
