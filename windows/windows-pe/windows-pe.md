@@ -464,9 +464,101 @@ PE规定了三类对齐
 
         +0064H,双字。初始化时实际提交的栈大小。保证初始线程的栈实际占用内存空间的大小。这些提交的栈不存在于交换文件里，而是在内存中。
 
+    - IMAGE_OPTIONAL_HEADER32.SizeOfHeapReserve
+
+        +0068H,双字。初始化时保留的堆大小。用来保留给初始进程堆使用的虚拟内存。默认为1MB
+
+    - IMAGE_OPTIONAL_HEADER32.SizeOfHeapCommit
+
+        +006CH,双字。初始化时实际提交的堆大小。在进程初始化时设定的堆所占用的内存空间。默认值为1页。
+
+    - IMAGE_OPTIONAL_HEADER32.LoaderFlags
+
+        +0070H，双字。加载标志。
+
+    - IMAGE_OPTIONAL_HEADER32.NumberOfRvaAndSize
+
+        +0074H，双字。定义数据目录结构的数量。一般为0000 0010H 即16个。该值由字段SizeOfOptionalHeaders决定，取值范围：2-16.
+
+    - IMAGE_OPTIONAL_HEADER32.DataDirectory
+
+        +0078H，结构。由16个IAMGE_DATA_DIRECTORY的结构线性排列而成。用于定义PE中的16种不同类别的数据所在的位置与大小。
+
+        说明如下：
+
+            [0]:导出数据所在的节：.edata 包含一些可被其他EXE程序访问的符号的相关信息：导出函数和资源等。通常出现在DLL中。某些EXE中也存在。
+            [1]:导入数据所在的节：.idata 包含了PE映像中所有导入的符号。EXE和DLL中都存在。
+            [2]:异常表数据所在的节：.pdata 用于异常处理的函数表项组成的数组。可选文件头中的ExceptionTable字段指向它。
+            [3]:资源数据所在的节：.rsrc  多层的二叉排序树。树的节点指向PE中各种类型的资源：图标、对话框、菜单等。PE中常分3层：类型层，名称层，语言代码层。
+            [4]:属性证书数据。类似PE文件的校验和或MD5.通过属性证书方式可以验证一个PE文件是否被非法修改过。每一个属性证书表项指向 WIN_CERTIFICATE 结构。
+            [5]:基址重定位信息所在的节：.reloc 基址重定位表包含了映像中所有需要重定位的内容。他被划分为许多块。每一块表示一个4KB页面范围内的基址重定位信息。
+            [6]:调试数据所处的节：.debug 指向 IMAGE_DEBUG_DIRECTORY 结构数组。其中的每个元素都描述了PE的调试信息。大部分情况下该字段被丢弃。
+            [7]:预留，必须为0.
+            [8]:Global Ptr 数据描述的是被存储在全局指针寄存器中的一个值
+            [9]:线程本地存储数据所处的节：.tls  线程本地存储（TLS）是Windows支持的一种特殊存储类别。其中的数据对象不是栈变量，而是对应于运行相应代码的单个线程。每个线程都可以为使用TLS定义的变量来维护一个不同于其他线程的值。
+            [10]:加载配置信息用于包含保留的SEH技术。基于x86的32位系统，提供了一个安全的结构化异常处理程序列表。
+            [11]:绑定导入数据。优化导入信息，提高PE的加载效率。
+            [12]:IAT（导入地址表），导入表的一部分。定义了所有导入函数的VA。
+            [13]:延迟导入数据。为了给 应用程序直到首次调用某个DLL中的函数或数据时才加载这个DLL（延迟加载），提供了一种统一的访问机制。
+            [14]:CLR数据所处的节：.cormeta .NET框架的一个重要组成部分。所有基于.NET框架开发的程序，其初始化部分都是通过访问这部分定义实现的。PE加载时通过该结构加载代码托管机制需要的所有动态链接库文件。并完成与CLR有关的一些其他操作。
+            [15]:系统预留，未定义。
 
 4. 数据目录项IMAGE_DATA_DIRECTORY的字段
+
+    - IMAGE_DATA_DIRECTORY.VirtualAddress
+
+        +0000H,双字。记录了特定类型数据的起始RVA，针对不同数据结构，该字段包含的数据含义不一样。属性证书数据该字段表示的是FOA
+
+    - IMAGE_DATA_DIRECTORY.VirtualAddress
+
+        +0004H,双字。记录了特定类型的数据块的长度。
+
 5. 节表项IMAGE_SECTION_HEADER的字段
+
+    - IMAGE_SECTION_HEADER.Name1
+
+        +0000H,8字节。一般情况是以‘\0’结尾的ASCII字符串来标识节的名称。内存自行定义。
+
+    - IMAGE_SECTION_HEADER.Misc
+
+        +0008H,双字。union型数据。这是节的数据在没有对齐前的真实尺寸。不过很多PE中并不准确。
+
+    - IMAGE_SECTION_HEADER.VirtualAddress
+
+        +00CH，双字。节区的RVA地址。
+
+    - IMAGE_SECTION_HEADER.SizeOfRawData
+
+        +0010H,双字。节在文件中对齐后的尺寸。数据量不大的节，一般大小为200H
+
+    - IMAGE_SECTION_HEADER.PointerToRawData
+
+        +0014H，双字。节区起始数据在文件中的偏移。
+
+    - IMAGE_SECTION_HEADER.PointerToRelocations
+
+        +0018H，双字。在 .obj 文件中使用，指向重定位表的指针
+
+    - IMAGE_SECTION_HEADER.PointerToLinenumbers
+
+        +001CH，双字。行号表的位置。
+
+    - IMAGE_SECTION_HEADER.NumberOfRelocations
+
+        +0020H，单字。重定位表的个数（在OBJ文件中使用）
+
+    - IMAGE_SECTION_HEADER.NumberOfLinenumbers
+
+        +0022H，单字。行号表中行号的数量。
+
+    - IMAGE_SECTION_HEADER.Characteristics
+
+        +0024H，双字。节的属性。
+
+        具体定义如下：
+        ![IMAGE_SECTION_HEADER.Characteristics](第三章/3-5-5.png)
+
+
 6. 解析HelloWorld程序的字节码
 
 ### 6、PE内存映像
