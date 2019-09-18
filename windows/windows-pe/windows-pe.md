@@ -110,6 +110,8 @@ PE数据结构中的指针定义： 如果一个数据结构中存储的是一�
 从操作系统来看：节是相同属性数据的组合。尽管有些数据类型不同，分别属于不同的数据目录，但由于访问属性相同，便被归类到同一个节中。
 相同页面的节具有相同的访问属性。
 
+windows 操作系统装载PE文件时会对这些数据执行抛弃、合并、新增、复制等操作。
+
 5. 对齐
 
 PE规定了三类对齐
@@ -141,7 +143,7 @@ PE规定了三类对齐
 
         在16位系统下，PE结构大致可以划分两部分：DOS头和冗余数据。
 
-        DOS头 = DOS MZ 头 + DOS Stub
+        DOS头 = DOS MZ 头 + DOS Stub（指令代码）
         冗余数据 = PE头 + PE数据区
 
     > DOS MZ 头
@@ -157,13 +159,14 @@ PE规定了三类对齐
     在16位操作系统中，PE头和PE数据部分被当成是冗余数据；
     在32位系统中，刚好相反，DOS头成为冗余数据。
     尽管DOS头不参与32位操作系统运行过程。但也不能去除这些数据。
-    因为在DOS MZ头中有一个字段非常重要 ： IMAGE_DOS_HEADER.e_lfanew 没有它操作系统就定位不到标准的PE头部，可执行程序就会被操作系统认为是非法的PE映像。
+
+    因为在DOS MZ头中有一个字段非常重要 ： <b>IMAGE_DOS_HEADER.e_lfanew</b> 没有它操作系统就定位不到标准的PE头部，可执行程序就会被操作系统认为是非法的PE映像。
 
    > 定位标准PE头
 
     字段e_lfanew 用来定位后面的标准PE头部。
     该字段的值是一个相对偏移量。绝对定位时，需要加上DOS MZ头的基地址。
-    获取PE头的绝对位置 ： 
+    获取PE头的绝对位置 ：
 
     PE_start = DOS MZ 基地址 + IMAGE_DOS_HEADER.elfanew
     = 13B7:0100 + 0000 00B0H
@@ -175,11 +178,12 @@ PE规定了三类对齐
     PE结构可以划分为5个部分：
     DOS MZ头、DOS Stub 、PE头、节表和节内容
 
-    DOS MZ 头的大小是64个字节
-    PE头的大小是456个字节（由于数据目录表项不一定是16个，所以准备的说，PE头也是一个不能确定大小的结构。该结构的实际大小由字段IMG_FILE_HEADER.SizeOfOptionalHeader来确定。）
+    <b style = 'color:red'>DOS MZ 头的大小是64个字节(固定不变)</b><br>
+
+    PE头的大小是456个字节（<b style = 'color:red'>由于数据目录表项不一定是16个，所以准确的说，PE头也是一个不能确定大小的结构。该结构的实际大小由字段IMG_FILE_HEADER.SizeOfOptionalHeader来确定。</b><br>）
 
     节表的大小不固定，是因为每个PE中节的数量不固定。
-    每个节的描述信息则是个固定值，共40字节。
+    <b style = 'color:red'>每个节的描述信息则是个固定值，共40字节。</b><br>
     节表 = 不确定数量的节描述信息 组成 = n* 40 字节 （n=节）
     节的数量由字段IMAGE_FILE_HEADER.NumberOfSections来定义。
 
@@ -213,29 +217,254 @@ PE规定了三类对齐
 
 2. PE 头标识 Signature
 
-        位置：紧跟DOS Stub之后，位于IMAGE_DOS_HEADER的e_lfanew的指向的位置。
-        内容： 内容固定，ASCII码的字符串：“PE\0\0”
+        位置：紧跟DOS Stub之后: DOS MZ 头基地址 + IMAGE_DOS_HEADER.e_lfanew
+        内容： 固定为ASCII码的字符串：“PE\0\0”
+        占用字节：4个字节
 
 3. 标准PE 头 IMAGE_FILE_HEADER
 
-        位置：紧跟在PE头标识Signature之后，位于IMAGE_DOS_HEADER的e_lfanew的值 + 4 指向的位置.
-        内容：共20个字节，数据结构为 IMAGE_FILE_HEADER 的内容。
+        位置： DOS MZ 头基地址 + IMAGE_DOS_HEADER.e_lfanew + 4
+        内容：数据结构为 IMAGE_FILE_HEADER 的内容。
+        占用字节：20个 字节
 
     > IMAGE_FILE_HEADER 格式如下：
 
     ![image_file_header](第三章/3-4-3.png)
 
+    > 这里存储的数据结构在微软的官方文档中称为标准通用对象文件格式（Common Object File Format，COFF）  头。记录PE文件的全局属性
+
+    > 文件中指向的偏移 是基于 IMAGE_NT_HEADERS头的
+
 
 4. 扩展PE头 IMAGE_OPTIONAL_HEADER
+
+        位置：
+        内容：COFF 头定义如下图
+        占用字节：216个字节
+
+![IMAGE_OPTIONAL_HEADER](第三章/3-4-4.png)
+
 5. PE头IMAGE_NT_HEADERS
+
+    > 广义上的PE头，标准的PE文件中，大小为456个字节。严格来说，这是概念意义上的定义
+
+        位置：DOS MZ 头基地址 + IMAGE_DOS_HEADER.e_lfanew
+        内容：Signature + IMAGE_FILE_HEADER + IMAGE_OPTIONAL_HEADER
+        占用字节：标准的PE文件中为：456个字节
+
+    ![IMAGE_OPTIONAL_HEADER](第三章/3-4-5.png)
+
 6. 数据目录项IMAGE_DATA_DIRECTORY
+
+        位置：IMAGE_OPTIONAL_HEADER.DataDirectory +IMAGE_OPTIONAL_HEADER 基地址
+        内容：定义了PE文件中出现的所有不同类型的数据的目录信息。
+        字节：n*8 (n最大为16 n=IMAGE_OPTIONAL_HEADER.NumberOfRvaAndSizes)
+
+    > IMAGE_DATA_DIRECTORY 定义如下：
+
+    ![IMAGE_DATA_DIRECTORY](第三章/3-4-6.png)
+
+    > 16个元组每一项代表的数据类型如下：
+
+    ![IMAGE_DATA_DIRECTORY_1](第三章/3-4-6-a.png)
+
+    > 展开后的偏移结构
+
+    ![IMAGE_DATA_DIRECTORY_2](第三章/3-4-6-b.png)
+
+    > 上图结构在PE中并不存在！这里仅是为了方便以后编程时作为参考
+
+
 7. 节表项IMAGE_SECTION_HEADER
+
+        位置：
+        内容：每个节表项都记录了PE中某个特定的节的信息（属性，大小，内存中的位置等。）
+        字节：n*40 (n=节表数量)
+
+    > 具体结构如图：
+
+  ![IMAGE_SECTION_HEADER](第三章/3-4-7.png)
 
 ### 5、数据结构字段详解
 
 1. PE头 IMAGE_NT_HEADER的字段
+
+    - IMAGE_NT_HEADER.Signature
+
+        +000H,双字。PE文件标识。
+         <b style = 'color:red'>被定义为：0000 4550H</b>也就是PE两个字符 加上 0.
+         修改PE文件标识会导致PE文件在32位系统中加载失败。可以通过windows PE 启动盘对疑是病毒文件进行修改，防止开机病毒文件加载。
+
+    - IMAGE_NT_HEADER.FileHeader
+
+        +0004H,结构。该结构指向IMAGE_FILE_HEADER ，由于PE扩展通用COFF规范，所以提，该字段在官方文档中被称为标准COFF头。
+
+    - IMAGE_NT_HEADER.OptionalHeader
+
+        +0018H，结构。指向IMAGE_OPTIONAL_HEADER32。可执行文件的大部分特性都在这个结构中。
+        可选头分为两个部分：前10个字段原属于COFF，用来加载和运行一个可执行文件。后21个字段则是通过链接器追加，作为PE扩展的部分。用户描述可执行文件的一些信息，供PE加载器加载使用。
+
 2. 标准PE头IMAGE_FILE_HEADER的字段
-3. 扩展PE头 IMAGE_OPTIONAL_HEADER的字段
+
+    - IMAGE_FILE_HEADER.Machine
+
+        +0004H，单字。指定PE文件运行的平台。具体取值含义如下：
+
+        ![IMAGE_FILE_HEADER.Machine](第三章/3-5-2-a.png)
+
+    - IMAGE_FILE_HEADER.NumberOfSections
+
+        +0006H,单字。文件中存在的节的总数。xp中，可以有0个节，但数值不能小于1，也不能超过96.如果此处设置0，装载程序时会提示：不是有效的Win32程序 <br>
+        这个值不能比实际内存中存在的节多，也不能比它少。否在装载时会发生错误，提示：不是有效的Win32应用程序。
+        删除或修改节的数量时，这里需要改变。
+    
+    - IMAGE_FILE_HEADER.TimeDateStamp
+
+        +0008H，双字。编译器创建此文件时的时间戳。低32位存放自1970.1.1到创建时间为止的总秒数。
+        这个数值可以修改不会影响程序运行。对用户创建的文件并没有任何意义。这里与文件属性的三个时间并无关系。
+
+    - IMAGE_FILE_HEADER.PointerToSymbolTable
+
+        +000CH，双字。COFF符号表的文件偏移。如果不存在COFF符号表，此值为0.对于映像文件来说，此值为0.微软已经不赞成在PE中使用COFF调试信息。
+
+    - IMAGE_FILE_HEADER.NumberOfSymbols
+
+        +0010H,双字。符号表中元素的数目。由于字符串表紧跟在符号表后，可以利用这个值来定位字符串表。对于映像文件来说，此值为0，主要用于调试。
+
+    - IMAGE_FILE_HEADER.SizeOfOptionalHeader
+
+        +0014H，单字。<b style = 'color:red'>指定结构IMAGE_OPTIONAL_HEADER32的长度,默认情况等于00E0H，64位文件默认为00F0H</b>
+
+        修改这个值时需注意两点：1.改完之后需要自行扩充IMAGE_OPTIONAL_HEADER32的大小 2.扩充后，要维持文件对齐特性。此处增加8个字节，后面也要对应删除8个字节。
+
+    - IMAGE_FILE_HEADER.Characteristics
+
+        +0016H,单字。文件属性标志字段。每一个比特位代表含义如下：
+
+        ![IMAGE_FILE_HEADER.Characteristics](第三章/3-5-2-b.png)
+
+3. 扩展PE头 IMAGE_OPTIONAL_HEADER32的字段
+
+    - IMAGE_OPTIONAL_HEADER32.Magic
+
+        +0018H,单字。魔术字。说明文件类型。010BH，文件为PE32，0107H，文件为ROM映像，020BH，文件为PE32+，即64位下的PE文件。
+
+    - IMAGE_OPTIONAL_HEADER32.LinkerVersion
+    - IMAGE_OPTIONAL_HEADER32.MinorLinkerVersion
+
+        +001AH,单字。两个字段都是字节型，指定链接器版本号，对执行无影响。
+
+    - IMAGE_OPTIONAL_HEADER32.SizeOfCode
+
+        +001CH，双字。所有代码节的总和。该大小是基于文件对齐后的大小，而非内存对齐后的大小。
+        <b style = 'color:red'>判断某个节是否包含代码：根据节的属性中是否含有IMAGE_SCN_CNT_CODE 标志去判断，而非IMAGE_SCN_MEM_EXECUTE标志</b>
+
+    - IMAGE_OPTIONAL_HEADER32.SizeOfInitializedData
+
+        +0020H,双字。所有包含已经初始化的数据的节的总大小。
+
+    - IMAGE_OPTIONAL_HEADER32.SizeOfUninitializedData
+
+        +0024H,双字。所有包含未初始化的数据的节的总大小。这些数据被定义为未初始化，在文件中不占用空间，被加载进内存后，PE加载程序应该为这些数据分配适当大小的虚拟地址空间。
+
+    - IMAGE_OPTIONAL_HEADER32.AddressOfEntryPoint
+
+        +0028H,双字。该字段的值是一个RVA，记录了启动代码距离该PE加载后的起始位置到底有多少个字节。
+
+        如果在一段可执行文件中植入了自己的代码，并让自己代码执行，一般要修改这里的值，使之指向自己的代码入口位置。
+        对于一般程序映像来说，它就是启动地址；
+        对于设备驱动程序来说，它是初始化函数的地址；
+        入口点对DLL来说是可选的，如果不存在入口点这个字段必须设置为0
+
+         <b style = 'color:red'>许多病毒程序、加密程序、补丁程序都会劫持这里的值，使其指向其他用途的代码。</b>
+
+    - IMAGE_OPTIONAL_HEADER32.BaseOfCode
+
+        +002CH,双字。代码节的起始RVA。表示映像被加载进内存时代码节的开头相对于映像基址的偏移地址。一般情况，代码节紧跟在PE头部后面，节的名称通常为 .text
+
+    - IMAGE_OPTIONAL_HEADER32.BaseOfData
+
+        +0030H,双字。数据节的起始RVA。表示映像被加载进内存时数据节的开头相对于映像基址的偏移地址。一般情况，数据节位于文件末尾，节的名称通常为 .data
+
+    - IMAGE_OPTIONAL_HEADER32.ImageBase
+
+        +0034H,双字。指出了PE映像的优先装入地址。也就是在IMAGE_OPTIONAL_HEADER32.AddressOfEntryPoint中的程序被加载到内存后的起始VA。
+
+        链接器在产生可执行文件的时候，是对应这个地址来生成机器码的。如果操作系统也按照这个地址加载机器码到内存中，那么指令中的许多重定位信息就不需要修改，这样运行速度会更快。
+
+        对于EXE文件来说，每个文件使用的都是独立的虚拟地址空间，所以，优先装入的地址通常不会被其他模块占据。也就是说，EXE文件总是能按照这个地址装入，这就意味着装入后的EXE文件不需要进行重定位。
+
+        链接的时候，可以使用参数 -base 来指定优先装入的地址，如果不指定，默认EXE地址：0x00400000H，DLL默认地址：0x10000000H，如果一个进程用到了多个DLL文件，装入地址可能会发生冲突。PE加载器会调整其中的地址，使所有的DLL文件都能被正确装入。
+        所以并不是内存中动态链接库的基地址和文件头字段IMAGE_OPTIONAL_HEADER32.ImageBase 指定的完全一样。
+
+        可以自己定义这个值，但是取值有限制：第一、取值不能超出边界，取值必须在进程地址空间中。二、该值必须是64KB的整数倍。
+
+    - IMAGE_OPTIONAL_HEADER32.SectionAlignment
+
+        +0038H,双字。内存中节的对齐粒度。指定了节被装入内存后的对齐单位。
+
+        Win32页面大小是4KB，所以Win32 PE中节的内存对齐粒度一般都选择4KB大小。十六进制表示为：01000H
+
+        SectionAlignment 必须 大于 或等于 FileAlignment。当它小于系统页面大小时，必须保证 SectionAlignment 和 FileAlignment 相等。
+
+    - IMAGE_OPTIONAL_HEADER32.FileAlignment
+
+        +003CH,双字，文件中节的对齐粒度。
+
+    - IMAGE_OPTIONAL_HEADER32.MajorOperatingSystemVersion
+    - IMAGE_OPTIONAL_HEADER32.MinorOperatingSystemVersion
+
+        +0040H, 以上两个字段都为单字。标识操作系统的版本号，分别为主版本号和次版本号。
+
+    - IMAGE_OPTIONAL_HEADER32.MajorImageVersion
+    - IMAGE_OPTIONAL_HEADER32.MinorImageVersion
+
+        +0044H, 以上两个字段都为单字。标识PE文件映像的版本号，分别为主版本号和次版本号。
+
+    - IMAGE_OPTIONAL_HEADER32.MajorSubsystemVersion
+    - IMAGE_OPTIONAL_HEADER32.MinorSubsystemVersion
+
+        +0048H, 以上两个字段都为单字。运行所需要的子系统版本号，分别为主版本号和次版本号。
+
+    - IMAGE_OPTIONAL_HEADER32.Win32VersionValue
+
+        +004CH,双字。子系统版本的值，暂时保留未用。必须为0.
+
+    - IMAGE_OPTIONAL_HEADER32.SizeOfImage
+
+        +0050H，双字。内存中整个PE文件的映射尺寸。该值可以比实际值大，但不能比它小。且必须保证该值是SectionAlignment 的整数倍。
+
+    - IMAGE_OPTIONAL_HEADER32.SizeOfHeader
+
+        +0054H，双字。所有头 + 节表 按照文件对齐粒度对齐后的大小。
+
+    - IMAGE_OPTIONAL_HEADER32.CheckSum
+
+        +0058H，双字，校验和。大多数的PE文件中，该值为0.但在一些内核模式的驱动程序和系统DLL中，该值必须是存在且正确的。
+
+    - IMAGE_OPTIONAL_HEADER32.Subsystem
+
+        +005CH，单字。指定使用界面的子系统。这个字段决定了系统如何为程序建立初始的界面。链接时的参数：-subsystem：xxx 选项指定的就是这个字段的值。
+
+        具体取值如下：
+        ![IMAGE_OPTIONAL_HEADER32.Subsystem](第三章/3-5-3-a.png)
+
+    - IMAGE_OPTIONAL_HEADER32.DllCharacteristics
+
+        +005EH,单字。DLL文件属性。它是一个标志集，针对所有PE文件的。
+
+        具体定义如下：
+        ![IMAGE_OPTIONAL_HEADER32.DllCharacteristics](第三章/3-5-3-b.png)
+
+    - IMAGE_OPTIONAL_HEADER32.SizeOfStackReserve
+
+        +0060H,双字。初始化时保留栈的大小。为初始线程的栈而保留的虚拟内存数量。并不是留出的所有虚拟内存都可以做栈。默认值是：0x100000（1MB）
+
+    - IMAGE_OPTIONAL_HEADER32.SizeOfStackCommit
+
+        +0064H,双字。初始化时实际提交的栈大小。保证初始线程的栈实际占用内存空间的大小。这些提交的栈不存在于交换文件里，而是在内存中。
+
+
 4. 数据目录项IMAGE_DATA_DIRECTORY的字段
 5. 节表项IMAGE_SECTION_HEADER的字段
 6. 解析HelloWorld程序的字节码
