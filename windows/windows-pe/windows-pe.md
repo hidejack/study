@@ -488,8 +488,8 @@ PE规定了三类对齐
 
             [0]:导出数据所在的节：.edata 包含一些可被其他EXE程序访问的符号的相关信息：导出函数和资源等。通常出现在DLL中。某些EXE中也存在。
             [1]:导入数据所在的节：.idata 包含了PE映像中所有导入的符号。EXE和DLL中都存在。
-            [2]:异常表数据所在的节：.pdata 用于异常处理的函数表项组成的数组。可选文件头中的ExceptionTable字段指向它。
-            [3]:资源数据所在的节：.rsrc  多层的二叉排序树。树的节点指向PE中各种类型的资源：图标、对话框、菜单等。PE中常分3层：类型层，名称层，语言代码层。
+            [2]:资源数据所在的节：.rsrc  多层的二叉排序树。树的节点指向PE中各种类型的资源：图标、对话框、菜单等。PE中常分3层：类型层，名称层，语言代码层。
+            [3]:异常表数据所在的节：.pdata 用于异常处理的函数表项组成的数组。可选文件头中的ExceptionTable字段指向它。
             [4]:属性证书数据。类似PE文件的校验和或MD5.通过属性证书方式可以验证一个PE文件是否被非法修改过。每一个属性证书表项指向 WIN_CERTIFICATE 结构。
             [5]:基址重定位信息所在的节：.reloc 基址重定位表包含了映像中所有需要重定位的内容。他被划分为许多块。每一块表示一个4KB页面范围内的基址重定位信息。
             [6]:调试数据所处的节：.debug 指向 IMAGE_DEBUG_DIRECTORY 结构数组。其中的每个元素都描述了PE的调试信息。大部分情况下该字段被丢弃。
@@ -561,14 +561,49 @@ PE规定了三类对齐
 
 6. 解析HelloWorld程序的字节码
 
+整理结构如图：
+
+![PE](第三章/PE文件结构.jpg)
+
+
 ### 6、PE内存映像
 
 ### 7、PE文件头编程
 
 1. RVA与FOA的转换
+
+    RVA ： 在内存中的相对虚拟内存地址 （相对于IMAGE_OPTIONAL_HEADER32.ImageBase）
+    FOA : 在文件中的偏移地址（相对IMAGE_NT_HEADER基址）
+
+    RVA和FOA 都是偏移地址。
+
+    前置条件：
+        1.PE文件头 和 PE内存映像的文件头大小是一样的。它们受对齐粒度不同的影响。
+        2. 节的数据在内存和磁盘文件的大小是一样的。
+        3. 节表项 记录了 节 在内存中的起始RVA （IMAGE_SECTION_HEADER.VirtualAddress）
+        4. 节表项 记录了 节在文件中的起始偏移(IMAGE_SECTION_HEADER.PointerToRawData)
+
+    关键点：节在内存中是线性排列的！如果找到下一个节的内存起始RVA就能知道上一个节的大小。
+
+    求给定的RVA 的FOA：
+
+        1. 判断给定的RVA在哪个节内
+        2. 求出该节的起始RVA0 = IMAGE_SECTION_HEADER.VirtualAddress
+        3. 求出偏移量 offset = RVA - RVA0
+        4. 求出该RVA相对于磁盘文件头的偏移：FOA = IMAGE_SECTION_HEADER.PointerRawData + offset
+
+    .text :代码节
+    .data : 数据节
+
 2. 数据定位
 3. 标志位操作
 4. PE校验和
+
+    校验和算法：
+
+        1. 将文件头部的字段IMAGE_OPTIONAL_HEADER32.CheckSum 清0
+        2. 以WORD 为单位堆数据块进行带进位的累加，大于WORD部分自动溢出
+        3. 将累加和 加上文件的长度。
 
 ---
 
