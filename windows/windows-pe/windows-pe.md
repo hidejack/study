@@ -806,6 +806,9 @@ LockTray.exe 导入表结构 ：
 
 ### 1、导出表的作用
 
+        1. 可以通过导出表分析不认识的动态链接库文件所能提供的功能
+        2. 向调用者提供输出函数指令在模块中的起始地址
+
 1. 分析动态链接库功能
 2. 获得导出函数地址
 
@@ -821,6 +824,44 @@ LockTray.exe 导入表结构 ：
 
 1. 导出表定位
 2. 导出目录IMAGE_EXPORT_DIRECTORY
+
+    导出目录IMAGE_EXPORT_DIRECTORY 结构：
+    ![image_export_directory](第五章/5-3-2.png)
+
+    导入表的IMAGE_IMPORT_DESCRIPTOR 个数与调用的动态链接库个数相等。
+
+    而导出表的IMAGE_EXPORT_DIRECTORY只有1个。
+
+    - IMAGE_EXPORT_DIRECTORY.nName
+
+        +000CH，双字。指向一个以“\0”结尾的字符串，字符串记录了所在的文件的最初文件名。
+
+    - IMAGE_EXPORT_DIRECTORY.NumberOfFunctions
+
+        +0014H，双字。定义了文件中导出函数的总个数
+
+    - IMAGE_EXPORT_DIRECTORY.NumberOfNames
+
+        +0018H，双字。记录了所有定义名字函数的个数。如果为0，则表示所有函数都没有定义名字。
+
+    - IMAGE_EXPORT_DIRECTORY.AddressOfFunctions
+
+        +001CH，双字。该指针指向了全部导出函数的入口地址的起始。入口地址开始为双字数组。数组长度 取决 IMAGE_EXPORT_DIRECTORY.NumberOfFunctions 字段。
+
+    - IMAGE_EXPORT_DIRECTORY.nBase
+
+        +0010H，双字。导出函数编号的起始值。DLL中的第一个导出函数并不是从0开始的。
+
+    - IMAGE_EXPORT_DIRECTORY.AddressOfNames
+
+        +002H，双字。该值为一个指针，指向一连串的双字值。这些双字值均指向了对应的定义了函数名的函数的字符串地址。长度为 ： NumberOfNames
+
+    - IMAGE_EXPORT_DIRECTORY.AddressOfNameOrdinals
+
+        +0024H，双字。指针。与AddressOfName是一一对应关系。这里指向了函数在AddressOfFunctions中的索引值。
+
+        <B>索引值是一个字，而非双字。索引值 = 编号 - nBase</B>
+
 3. 导出表实例分析
 
 ### 4、导出表编程
@@ -840,8 +881,37 @@ LockTray.exe 导入表结构 ：
 
 ### 1、栈
 
+    栈选择子ss 和栈顶指针 esp 确定栈的大小
+
+    ebp 用来存取数据
+
+    对于32位系统，单独一个寄存器的长度就能访问到完整的4GB虚拟内存空间。所以调用call时，需要将cs寄存器压栈。也没有长调用和调用之分。
+
+    32位汇编语言中，cs依然是16位。其中存放了段的描述符，通常称为段选择子。
+
+    保护模式下 ： 段选择子 + 程序偏移地址
+
+    段选择子指向了保护模式中“全局/局部描述表”的某个位置，这张表中记录了真正的段地址。
+
 1. 栈的应用场合
+
+    - 保存临时的值
+    - 保存程序现场
+    - 传递函数参数
+    - 存放过程中的局部变量
+
 2. call调用中的栈实例分析
+
+    - call指令的调用过程如下：
+
+            1. 将调用函数用到的参数入栈
+            2. 将call 指令的下一条指令入栈，以备返回
+            3. 保存原始ebp指针
+            4. 为函数准备栈空间，ebp指向栈中该函数的基地址
+            5. 为函数中定义的局部变量开辟栈空间（通过调整esp来完成）
+            6. 运行函数中定义的语句
+            7. 清理局部变量，恢复原始的ebp指针（通过leave 指令）
+            8. 返回步骤2保存的下一条指令处执行。同时清理栈中的函数参数（通过指令retn 8 完成）（retn 8 将esp 向上移动8个字节，恢复栈顶，然后弹出保存的call 指令的下一个地址。）
 3. 栈溢出
 
 ### 2、代码重定位
